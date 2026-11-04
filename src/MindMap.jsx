@@ -18,7 +18,7 @@ const geometry = {
   },
   fines: {
     hub: [550, 838], quadrant: 'bottom-left',
-    nodes: [[84, 933], [480, 933], [84, 1060], [480, 1060], [84, 1187], [480, 1187], [845, 1187]]
+    nodes: [[84, 933], [480, 933], [84, 1060], [480, 1060], [84, 1187], [480, 1187], [825, 1187]]
   },
   gestion: {
     hub: [1450, 838], quadrant: 'bottom-right',
@@ -114,7 +114,7 @@ function Twig({ section, index, node }) {
 function Concept({ item, section, coords, selectedId, onSelect }) {
   const [x, y] = coords;
   const small = item.id === 'compromiso';
-  const boxWidth = small ? 305 : 380;
+  const boxWidth = small ? 325 : 380;
   const fontSize = small ? 15.2 : 16.2;
   const lines = wrapSentence(item.mapText || item.short, small ? 43 : 48);
   const selected = selectedId === item.id;
