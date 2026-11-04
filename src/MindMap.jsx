@@ -80,7 +80,7 @@ function MainCurve({ section, focus }) {
   };
   const faded = focus !== 'all' && focus !== section.id;
   return (
-    <g opacity={faded ? .18 : 1} style={{ transition: 'opacity 200ms ease' }}>
+    <g data-filterable="true" opacity={faded ? .18 : 1} style={{ transition: 'opacity 200ms ease' }}>
       <path d={paths[section.id]} stroke={section.pale} strokeWidth="26"
         strokeLinecap="round" fill="none"/>
       <path d={paths[section.id]} stroke={section.color} strokeWidth="9"
@@ -146,7 +146,7 @@ function Branch({ section, selectedId, focus, onSelect }) {
   const symbolX = hx + (s.side === 'left' ? -66 : -18);
   const sy = hy - 12;
   return (
-    <g opacity={faded ? .18 : 1} style={{ transition: 'opacity 200ms ease' }}>
+    <g data-filterable="true" opacity={faded ? .18 : 1} style={{ transition: 'opacity 200ms ease' }}>
       {section.items.map((item, index) =>
         <ThinCurve key={'stroke-' + item.id} from={s.root}
           to={[s.nodes[index][0] - 20, s.nodes[index][1]]}
