@@ -17,8 +17,8 @@ const layout = {
     root: [552, 340], heading: [418, 336], side: 'left', tier: 'top',
     nodes: [
       [118, 158], [375, 174],
-      [100, 265], [380, 277],
-      [132, 439], [384, 443]
+      [100, 265], [380, 250],
+      [102, 439], [433, 443]
     ]
   },
   principios: {
@@ -34,7 +34,7 @@ const layout = {
     nodes: [
       [114, 820], [368, 828],
       [96, 883], [378, 878],
-      [122, 1096], [393, 1090], [604, 1131]
+      [122, 1096], [393, 1090], [670, 1146]
     ]
   },
   gestion: {
@@ -156,10 +156,10 @@ function Branch({ section, selectedId, focus, onSelect }) {
         <BranchSymbol section={section} x={symbolX} y={sy - 3} />
         <text x={headingX} y={sy - 9} textAnchor="start" fontSize="31"
           fontWeight="760" fontFamily="Georgia, 'Times New Roman', serif"
-          letterSpacing="-.75" fill={section.ink}>{headingParts[section.id][0]}</text>
+          letterSpacing="-.75" stroke="#fcfaf5" strokeWidth="9" paintOrder="stroke" fill={section.ink}>{headingParts[section.id][0]}</text>
         <text x={headingX} y={sy + 23} textAnchor="start" fontSize="31"
           fontWeight="760" fontFamily="Georgia, 'Times New Roman', serif"
-          letterSpacing="-.75" fill={section.ink}>{headingParts[section.id][1]}</text>
+          letterSpacing="-.75" stroke="#fcfaf5" strokeWidth="9" paintOrder="stroke" fill={section.ink}>{headingParts[section.id][1]}</text>
         <path d={'M' + headingX + ' ' + (sy + 32) +
           'q82 7 172 -1'}
           stroke={section.color} strokeWidth="6" strokeLinecap="round"
