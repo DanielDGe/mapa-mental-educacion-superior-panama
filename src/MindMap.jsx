@@ -35,21 +35,27 @@ const headings = {
 
 // El ancho estimado admite unas 48 letras por línea; la división se realiza
 // por palabras, de modo que no se corta ni se reemplaza el texto original.
-function wrapSentence(text, maxChars = 48) {
+function wrapSentence(text, fontSize = 16.2, maxWidth = 343) {
+  const words = text.trim().split(/\s+/);
+  const context = typeof document === 'undefined'
+    ? null
+    : document.createElement('canvas').getContext('2d');
+  if (context) context.font = fontSize + 'px Arial';
+  const measure = value => context
+    ? context.measureText(value).width
+    : value.length * fontSize * .52;
   const lines = [];
   let line = '';
-  for (const word of text.trim().split(/\s+/)) {
-    const trial = line ? line + ' ' + word : word;
-    if (trial.length > maxChars && line) {
+  for (const word of words) {
+    const next = line ? line + ' ' + word : word;
+    if (line && measure(next) > maxWidth) {
       lines.push(line);
       line = word;
     } else {
-      line = trial;
+      line = next;
     }
   }
   if (line) lines.push(line);
-  // Evitamos truncar el contenido académico. El validador verifica que
-  // las frases redactadas para el mapa ocupen tres líneas o menos.
   return lines;
 }
 
@@ -115,10 +121,9 @@ function Concept({ item, section, coords, selectedId, onSelect }) {
   const [x, y] = coords;
   const small = item.id === 'compromiso';
   const boxWidth = small ? 325 : 380;
-  const fontSize = small ? 15.2 : 16.2;
-  const lines = wrapSentence(item.mapText || item.short, small ? 43 : 48);
+  const fontSize = small ? 14.5 : 16.2;
+  const lines = wrapSentence(item.mapText || item.short, fontSize, small ? 307 : 343);
   const selected = selectedId === item.id;
-  const bodyHeight = lines.length * 21;
   return (
     <g role="button" tabIndex={0}
       aria-label={item.title + '. ' + (item.mapText || item.short)}
@@ -138,12 +143,12 @@ function Concept({ item, section, coords, selectedId, onSelect }) {
       <circle cx={x - 1} cy={y - 3} r="8.4"
         fill="#fcfaf5" stroke={section.color} strokeWidth="2.6"/>
       <circle cx={x - 1} cy={y - 3} r="2.7" fill={section.color}/>
-      <text x={x + 16} y={y + 3} fontSize="20.5"
+      <text x={x + 16} y={y + 3} fontFamily="Arial, sans-serif" fontSize="20.5"
         fontWeight="730" fill="#233949"
         letterSpacing="-.42">{item.title}</text>
       <path d={'M' + (x + 16) + ' ' + (y + 12) + 'h' + (small ? 252 : 332)}
         stroke={section.color} opacity=".33" strokeWidth="1.8" />
-      <text x={x + 16} y={y + 32} fontSize={fontSize}
+      <text x={x + 16} y={y + 32} fontFamily="Arial, sans-serif" fontSize={fontSize}
         fontWeight="440" fill="#54636a" letterSpacing="-.04">
         {lines.map((line, i) =>
           <tspan key={i} x={x + 16} dy={i === 0 ? 0 : 20.6}>{line}</tspan>)}
