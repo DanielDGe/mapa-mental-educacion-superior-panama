@@ -1,171 +1,270 @@
 import React from 'react';
 import { metadata, sections } from './data.js';
 
-const W = 1600;
-const H = 1132;
-const locations = {
-  legal: { x: 54, y: 66, side: 'left' },
-  principios: { x: 1091, y: 66, side: 'right' },
-  fines: { x: 54, y: 634, side: 'left' },
-  gestion: { x: 1091, y: 634, side: 'right' }
+/*
+ * Original, deliberately asymmetric composition.
+ * The lines form four living branches and end in simple typographic leaves:
+ * no dashboard cards, repeated boxes or externally loaded images.
+ *
+ * The SVG remains self-contained, so it can be exported without a dependency
+ * on CSS, icon fonts or a canvas-rendering library.
+ */
+const WIDTH = 1800;
+const HEIGHT = 1272;
+
+const layout = {
+  legal: {
+    root: [552, 340], heading: [418, 336], side: 'left', tier: 'top',
+    nodes: [
+      [118, 158], [375, 174],
+      [100, 265], [380, 277],
+      [132, 439], [384, 443]
+    ]
+  },
+  principios: {
+    root: [1248, 340], heading: [1304, 336], side: 'right', tier: 'top',
+    nodes: [
+      [1218, 163], [1502, 174],
+      [1230, 267], [1501, 265],
+      [1220, 434], [1507, 441]
+    ]
+  },
+  fines: {
+    root: [551, 952], heading: [426, 962], side: 'left', tier: 'bottom',
+    nodes: [
+      [114, 820], [368, 828],
+      [96, 912], [378, 906],
+      [122, 1096], [393, 1090]
+    ]
+  },
+  gestion: {
+    root: [1246, 952], heading: [1302, 962], side: 'right', tier: 'bottom',
+    nodes: [
+      [1210, 820], [1508, 824],
+      [1221, 910], [1511, 911],
+      [1218, 1098], [1505, 1090]
+    ]
+  }
 };
-const relationships = [
-  { lead: 'Las leyes', text: 'establecen el marco de actuación', color: '#3566c9' },
-  { lead: 'Los principios', text: 'orientan la manera de actuar', color: '#138879' },
-  { lead: 'Los fines', text: 'dan sentido a los resultados', color: '#d78b23' },
-  { lead: 'La gestión', text: 'convierte todo en decisiones', color: '#8b5bc0' }
-];
 
-function Connection({ d, color }) {
-  return <path d={d} fill="none" stroke={color} strokeWidth="5"
-    strokeLinecap="round" opacity="0.74" />;
-}
+const headingParts = {
+  legal: ['Fundamentos', 'legales'],
+  principios: ['Principios', 'educativos'],
+  fines: ['Fines de la', 'educación'],
+  gestion: ['Administración', 'universitaria']
+};
 
-function Branch({ section, focus, selectedId, onSelect }) {
-  const pos = locations[section.id];
-  const width = 455;
-  const faded = focus !== 'all' && focus !== section.id;
+function BranchSymbol({ section, x, y }) {
+  const p = {
+    legal: <><path d="M-19 -2L0 -15 19 -2M-17 16H17M-13 2V13M-4 2V13M5 2V13M14 2V13M-20 20H20" /></>,
+    principios: <><path d="M-11 -3a11 11 0 0 1 22 0c0 6-7 9-7 15H-4c0-6-7-9-7-15M-6 17H6M-4 21H4M0-22v-5M-17-16l-5-5M17-16l5-5" /></>,
+    fines: <><circle cx="0" cy="0" r="16"/><circle cx="0" cy="0" r="8"/><circle cx="0" cy="0" r="2" fill="currentColor" stroke="none"/><path d="M0-23v10M0 13v10M-23 0h10M13 0h10" /></>,
+    gestion: <><rect x="-6" y="-20" width="12" height="10" rx="2"/><rect x="-23" y="10" width="12" height="10" rx="2"/><rect x="11" y="10" width="12" height="10" rx="2"/><path d="M0-10V2M-17 10V2H17V10" /></>
+  };
   return (
-    <g opacity={faded ? 0.29 : 1} style={{ transition: 'opacity 180ms ease' }}>
-      <rect x={pos.x} y={pos.y} width={width} height="380" rx="25"
-        fill="#ffffff" stroke={section.color} strokeOpacity=".22" strokeWidth="2" />
-      <rect x={pos.x} y={pos.y} width={width} height="61" rx="25"
-        fill={section.color} />
-      <rect x={pos.x} y={pos.y + 31} width={width} height="30"
-        fill={section.color} />
-      <circle cx={pos.x + 35} cy={pos.y + 30} r="19" fill="#ffffff" opacity=".20" />
-      <text x={pos.x + 35} y={pos.y + 37} textAnchor="middle"
-        fill="#ffffff" fontSize="24" fontWeight="700">{section.marker}</text>
-      <text x={pos.x + 66} y={pos.y + 38} fill="#ffffff"
-        fontSize={section.id === 'gestion' ? 22 : 24} fontWeight="750"
-        letterSpacing="-0.4">{section.title}</text>
-      {section.items.map((item, index) => {
-        const itemY = pos.y + 72 + index * 49;
-        const highlighted = selectedId === item.id;
-        return (
-          <g key={item.id} role="button" tabIndex={0}
-            aria-label={item.title + ': ' + item.short}
-            onClick={() => onSelect(item.id)}
-            onKeyDown={event => {
-              if (event.key === 'Enter' || event.key === ' ') {
-                event.preventDefault();
-                onSelect(item.id);
-              }
-            }}
-            style={{ cursor: 'pointer', outline: 'none' }}>
-            <rect x={pos.x + 14} y={itemY} width={width - 28} height="44" rx="12"
-              fill={highlighted ? section.pale : '#f7f9fd'}
-              stroke={highlighted ? section.color : '#e9edf5'}
-              strokeWidth={highlighted ? 2.7 : 1} />
-            <rect x={pos.x + 14} y={itemY + 6} width="4" height="32" rx="2"
-              fill={section.color} />
-            <circle cx={pos.x + 38} cy={itemY + 22} r="12"
-              fill={section.pale} stroke={section.color} strokeOpacity=".35" />
-            <text x={pos.x + 38} y={itemY + 27} textAnchor="middle"
-              fontSize="13" fontWeight="800" fill={section.ink}>{index + 1}</text>
-            <text x={pos.x + 61} y={itemY + 18}
-              fontSize="17" fontWeight="700" fill="#1a2b47">{item.title}</text>
-            <text x={pos.x + 61} y={itemY + 35}
-              fontSize="12.5" fill="#5c6a81">{item.short}</text>
-            <circle cx={pos.x + width - 31} cy={itemY + 22} r="10"
-              fill={section.pale} />
-            <text x={pos.x + width - 31} y={itemY + 27}
-              textAnchor="middle" fill={section.ink} fontSize="14">+</text>
-          </g>
-        );
-      })}
-      <text x={pos.x + width - 14} y={pos.y + 409} textAnchor="end"
-        fontSize="12.5" fill={section.ink} opacity=".8">{section.items.length} conceptos</text>
+    <g transform={'translate(' + x + ' ' + y + ')'}
+      color={section.ink} fill="none" stroke="currentColor" strokeWidth="2.5"
+      strokeLinecap="round" strokeLinejoin="round">
+      <circle r="34" fill={section.pale} stroke={section.color} strokeWidth="1.6" />
+      {p[section.id]}
     </g>
   );
+}
+
+function MainCurve({ section, focus }) {
+  const paths = {
+    legal: 'M749 557 C696 534 665 431 591 372 S552 344 552 340',
+    principios: 'M1051 557 C1106 525 1133 435 1208 371 S1245 347 1248 340',
+    fines: 'M749 729 C687 767 660 882 580 931 S551 953 551 952',
+    gestion: 'M1051 729 C1116 769 1143 877 1215 930 S1245 951 1246 952'
+  };
+  const faded = focus !== 'all' && focus !== section.id;
+  return (
+    <g opacity={faded ? .18 : 1} style={{ transition: 'opacity 200ms ease' }}>
+      <path d={paths[section.id]} stroke={section.pale} strokeWidth="26"
+        strokeLinecap="round" fill="none"/>
+      <path d={paths[section.id]} stroke={section.color} strokeWidth="9"
+        strokeLinecap="round" strokeLinejoin="round" fill="none" />
+      <circle cx={layout[section.id].root[0]} cy={layout[section.id].root[1]}
+        r="11" fill={section.color}/>
+      <circle cx={layout[section.id].root[0]} cy={layout[section.id].root[1]}
+        r="4" fill="#fff" opacity=".85"/>
+    </g>
+  );
+}
+
+function ThinCurve({ from, to, side, color, index }) {
+  const distance = side === 'left' ? 1 : -1;
+  const bend = index % 2 === 0 ? -14 : 14;
+  const midX = (from[0] + to[0]) / 2;
+  const path = 'M' + from[0] + ' ' + from[1] +
+    ' C' + (from[0] - distance * 68) + ' ' + (from[1] + bend) +
+    ' ' + (midX + bend) + ' ' + (to[1] - 13) +
+    ' ' + to[0] + ' ' + (to[1] - 13);
+  return <path d={path} fill="none" stroke={color} strokeWidth={index % 3 === 1 ? 3 : 2.5}
+    opacity=".47" strokeLinecap="round" />;
+}
+
+function Leaf({ item, section, xy, index, selectedId, onSelect }) {
+  const [x, y] = xy;
+  const important = [0, 2, 4].includes(index);
+  const textColor = '#25374a';
+  return (
+    <g role="button" tabIndex={0} aria-label={item.title + ': ' + item.short}
+      onClick={() => onSelect(item.id)}
+      onKeyDown={event => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          onSelect(item.id);
+        }
+      }}
+      style={{ cursor: 'pointer', outline: 'none' }}>
+      <title>{item.title}: {item.short}. Seleccionar para leer su explicación.</title>
+      <rect x={x - 32} y={y - 42} width="258" height="72" rx="20"
+        fill="#fff" opacity={selectedId === item.id ? '.95' : '0'}
+        stroke={section.color} strokeWidth={selectedId === item.id ? 2 : 0}/>
+      <circle cx={x - 17} cy={y - 15} r={important ? 10 : 8.5} fill={section.pale}
+        stroke={section.color} strokeWidth="2" />
+      <circle cx={x - 17} cy={y - 15} r="3" fill={section.color} />
+      <text x={x} y={y - 9} fontSize={important ? 21 : 19.5}
+        fontWeight={important ? 730 : 630} fill={textColor}
+        letterSpacing="-.45">{item.title}</text>
+      <text x={x} y={y + 14} fontSize="14.2" fill="#667080"
+        fontWeight="450" letterSpacing="-.08">{item.short}</text>
+      <path d={'M' + x + ' ' + (y + 23) + 'q37 4 88 0'}
+        stroke={section.color} strokeWidth="2" strokeLinecap="round"
+        fill="none" opacity={important ? .35 : .18}/>
+    </g>
+  );
+}
+
+function Branch({ section, selectedId, focus, onSelect }) {
+  const s = layout[section.id];
+  const faded = focus !== 'all' && focus !== section.id;
+  const [hx, hy] = s.heading;
+  const headingX = hx + (s.side === 'left' ? -40 : 38);
+  const symbolX = hx + (s.side === 'left' ? -66 : -18);
+  const sy = hy - 12;
+  return (
+    <g opacity={faded ? .18 : 1} style={{ transition: 'opacity 200ms ease' }}>
+      {section.items.map((item, index) =>
+        <ThinCurve key={'stroke-' + item.id} from={s.root}
+          to={[s.nodes[index][0] - 20, s.nodes[index][1]]}
+          side={s.side} index={index} color={section.color} />
+      )}
+      <g>
+        <BranchSymbol section={section} x={symbolX} y={sy - 3} />
+        <text x={headingX} y={sy - 9} textAnchor="start" fontSize="31"
+          fontWeight="760" fontFamily="Georgia, 'Times New Roman', serif"
+          letterSpacing="-.75" fill={section.ink}>{headingParts[section.id][0]}</text>
+        <text x={headingX} y={sy + 23} textAnchor="start" fontSize="31"
+          fontWeight="760" fontFamily="Georgia, 'Times New Roman', serif"
+          letterSpacing="-.75" fill={section.ink}>{headingParts[section.id][1]}</text>
+        <path d={'M' + headingX + ' ' + (sy + 32) +
+          'q82 7 172 -1'}
+          stroke={section.color} strokeWidth="6" strokeLinecap="round"
+          fill="none" opacity=".45" />
+      </g>
+      {section.items.map((item, index) => (
+        <Leaf key={item.id} item={item} section={section}
+          xy={s.nodes[index]} index={index}
+          selectedId={selectedId} onSelect={onSelect}/>
+      ))}
+    </g>
+  );
+}
+
+function Doodle({ x, y, kind, color }) {
+  const curves = kind === 'star'
+    ? <path d="M0-22 5-6 23 0 5 6 0 23-5 6-23 0-5-6Z" />
+    : kind === 'rays'
+      ? <><circle r="9"/><path d="M0-25v7M0 18v7M-25 0h7M18 0h7M-18-18l6 6M12 12l6 6M18-18l-6 6M-12 12l-6 6"/></>
+      : <><path d="M-24 0c13-22 34-16 38 0S3 19-14 7"/><path d="M-18-13c4 8 18 9 24 1"/></>;
+  return <g transform={'translate(' + x + ' ' + y + ')'}
+    fill="none" stroke={color} strokeWidth="3" strokeLinecap="round"
+    strokeLinejoin="round" opacity=".36">{curves}</g>;
 }
 
 export default function MindMap({ selectedId, focus, onSelect }) {
   return (
     <svg id="mental-map-svg" xmlns="http://www.w3.org/2000/svg"
-      viewBox={'0 0 ' + W + ' ' + H}
-      width={W} height={H}
-      role="img" aria-label={metadata.title + '. Cuatro ramas: fundamentos legales, principios, fines y administración universitaria.'}
-      style={{ width: '100%', height: 'auto', display: 'block', background: '#f5f7fc' }}>
+      viewBox={'0 0 ' + WIDTH + ' ' + HEIGHT}
+      width={WIDTH} height={HEIGHT}
+      role="img" aria-label={metadata.title + '. Mapa radial: fundamentos legales, principios, fines y administración universitaria.'}
+      style={{ display: 'block', width: '100%', height: 'auto', background: '#fcfaf5' }}>
       <defs>
-        <linearGradient id="center-gradient" x1="0" x2="1" y1="0" y2="1">
-          <stop offset="0%" stopColor="#162b52" />
-          <stop offset="100%" stopColor="#263c64" />
-        </linearGradient>
-        <pattern id="dots" width="28" height="28" patternUnits="userSpaceOnUse">
-          <circle cx="1.5" cy="1.5" r="1.4" fill="#cfd7e6" opacity=".5" />
+        <pattern id="paper-dots" width="39" height="39" patternUnits="userSpaceOnUse">
+          <circle cx="1.1" cy="1.1" r=".75" fill="#bfbaa9" opacity=".25"/>
         </pattern>
+        <radialGradient id="center-glow">
+          <stop offset="0" stopColor="#fff1cb" stopOpacity=".7"/>
+          <stop offset="1" stopColor="#fff1cb" stopOpacity="0"/>
+        </radialGradient>
       </defs>
-      <rect width={W} height={H} fill="#f5f7fc" />
-      <rect width={W} height={H} fill="url(#dots)" />
-      <rect x="22" y="20" width={W - 44} height={H - 40} rx="30"
-        fill="none" stroke="#dbe2ee" strokeWidth="2" />
-      <text x="64" y="42" fontSize="13.5" fill="#77869e"
-        letterSpacing="2.1" fontWeight="750">MAPA MENTAL DIGITAL · UNIDAD DIDÁCTICA II</text>
-      <text x={W - 66} y="42" fontSize="13.5" fill="#77869e"
-        textAnchor="end">{metadata.author} · Docencia Superior</text>
-
-      <g>
-        <Connection color="#3566c9" d="M548 470 C526 457 537 318 509 252" />
-        <Connection color="#138879" d="M1052 470 C1077 442 1054 319 1092 252" />
-        <Connection color="#d78b23" d="M548 589 C526 624 539 807 509 841" />
-        <Connection color="#8b5bc0" d="M1052 589 C1078 632 1059 813 1092 841" />
-        <circle cx="548" cy="470" r="10" fill="#3566c9" />
-        <circle cx="1052" cy="470" r="10" fill="#138879" />
-        <circle cx="548" cy="589" r="10" fill="#d78b23" />
-        <circle cx="1052" cy="589" r="10" fill="#8b5bc0" />
-      </g>
-
-      {sections.map(section => (
-        <Branch key={section.id} section={section}
-          focus={focus} selectedId={selectedId} onSelect={onSelect} />
-      ))}
-
-      <g>
-        <rect x="548" y="425" width="504" height="212" rx="32"
-          fill="url(#center-gradient)" />
-        <rect x="560" y="437" width="480" height="188" rx="26"
-          fill="none" stroke="#ffffff" strokeOpacity=".20" strokeWidth="2" />
-        <text x="800" y="474" textAnchor="middle" fill="#bcd2ff"
-          fontSize="15" fontWeight="700" letterSpacing="3.4">CONCEPTO CENTRAL</text>
-        <text x="800" y="524" textAnchor="middle" fill="#ffffff"
-          fontSize="31" fontWeight="800" letterSpacing="-.6">ADMINISTRACIÓN DE LA</text>
-        <text x="800" y="563" textAnchor="middle" fill="#ffffff"
-          fontSize="35" fontWeight="800" letterSpacing="-1">EDUCACIÓN SUPERIOR</text>
-        <text x="800" y="604" textAnchor="middle" fill="#ffffff"
-          fontSize="29" fontWeight="750" letterSpacing=".1">EN PANAMÁ</text>
-      </g>
-
-      <g>
-        <text x="800" y="697" textAnchor="middle" fill="#384b69"
-          fontSize="22" fontWeight="750">¿Cómo se relacionan?</text>
-        {relationships.map((link, i) => {
-          const y = 715 + i * 62;
-          return (
-            <g key={link.lead}>
-              <rect x="573" y={y} width="454" height="52" rx="13"
-                fill="#ffffff" stroke="#dce3ef" strokeWidth="1.6" />
-              <rect x="573" y={y} width="8" height="52" rx="4" fill={link.color} />
-              <circle cx="606" cy={y + 26} r="10" fill={link.color} opacity=".14" />
-              <circle cx="606" cy={y + 26} r="4" fill={link.color} />
-              <text x="626" y={y + 22} fill="#1d304f" fontSize="15.2"
-                fontWeight="750">{link.lead}</text>
-              <text x="626" y={y + 39} fill="#5f6d82" fontSize="13.6">{link.text}</text>
-              {i < 3 && <text x="800" y={y + 63} textAnchor="middle"
-                fontSize="15" fill="#8594ad">↓</text>}
-            </g>
-          );
-        })}
-      </g>
-
-      <rect x="53" y="1066" width="1494" height="43" rx="12"
-        fill="#e9eef8" />
-      <text x="76" y="1084" fill="#263951" fontSize="13.3" fontWeight="700">
-        Fuentes: Ley Orgánica de Educación y sus Reformas; Fundamentos Legales, Principios y Fines de la Educación Superior en Panamá.
+      <rect width={WIDTH} height={HEIGHT} fill="#fcfaf5" />
+      <rect width={WIDTH} height={HEIGHT} fill="url(#paper-dots)" />
+      <circle cx="900" cy="639" r="310" fill="url(#center-glow)" />
+      <path d="M65 104Q860 91 1735 104" stroke="#d6cfc3" strokeWidth="2"
+        fill="none" opacity=".55" />
+      <text x="84" y="58" fontSize="19" fontFamily="Georgia, 'Times New Roman', serif"
+        fontStyle="italic" fontWeight="600" fill="#183650">Educación superior en Panamá</text>
+      <text x="1718" y="58" textAnchor="end" fontSize="15.5" letterSpacing="1.8"
+        fontWeight="650" fill="#87909b">UNIDAD II · MAPA MENTAL DIGITAL</text>
+      <text x="84" y="89" fontSize="12.5" letterSpacing="1.2" fill="#89929c">
+        FUNDAMENTOS · PRINCIPIOS · FINES · ADMINISTRACIÓN
       </text>
-      <text x="76" y="1100" fill="#65748b" fontSize="12.2">
-        Síntesis académica de materiales de la Unidad II. Las relaciones administrativas son interpretaciones aplicadas.
-      </text>
+
+      <Doodle x={729} y={172} color="#3566c9" kind="star"/>
+      <Doodle x={1089} y={212} color="#138879" kind="rays"/>
+      <Doodle x={765} y={1038} color="#d78b23" kind="leaves"/>
+      <Doodle x={1062} y={1088} color="#8b5bc0" kind="star"/>
+
+      {sections.map(s => <MainCurve key={'main-' + s.id} section={s} focus={focus} />)}
+      {sections.map(s => <Branch key={s.id} section={s}
+        selectedId={selectedId} focus={focus} onSelect={onSelect} />)}
+
+      <g>
+        <path d="M739 522C798 491 1007 481 1071 532S1129 705 1067 745 802 799 746 746 688 577 739 522Z"
+          fill="#fff4df" stroke="#eedec1" strokeWidth="5"/>
+        <path d="M763 529C839 502 1007 503 1055 540S1094 694 1048 729 805 771 759 723 710 572 763 529Z"
+          fill="#193c4d"/>
+        <path d="M775 546C837 521 1000 519 1038 552"
+          fill="none" stroke="#d9e6d4" opacity=".35" strokeWidth="2" />
+        <text x="900" y="578" textAnchor="middle" fontSize="15.5"
+          fill="#bfded0" letterSpacing="2.5" fontWeight="700">CONCEPTO CENTRAL</text>
+        <text x="900" y="628" textAnchor="middle" fontSize="35"
+          fontFamily="Georgia, 'Times New Roman', serif"
+          fontWeight="700" fill="#fffaf0" letterSpacing="-.7">Administración de la</text>
+        <text x="900" y="672" textAnchor="middle" fontSize="39"
+          fontFamily="Georgia, 'Times New Roman', serif"
+          fontWeight="700" fill="#fffaf0" letterSpacing="-.95">Educación Superior</text>
+        <text x="900" y="710" textAnchor="middle" fontSize="25"
+          fontWeight="630" fill="#c9e3d4">en Panamá</text>
+      </g>
+
+      <g>
+        <path d="M759 825Q899 810 1034 823" fill="none"
+          stroke="#a9a18f" strokeWidth="1.5" opacity=".55"/>
+        <text x="900" y="855" textAnchor="middle" fontSize="19"
+          fontFamily="Georgia, 'Times New Roman', serif"
+          fontStyle="italic" fill="#5b625d">De las normas a las decisiones;</text>
+        <text x="900" y="883" textAnchor="middle" fontSize="19"
+          fontFamily="Georgia, 'Times New Roman', serif"
+          fontStyle="italic" fill="#5b625d">de la formación al bienestar social.</text>
+      </g>
+
+      <g>
+        <path d="M63 1191Q900 1178 1735 1191" stroke="#d6cfc3"
+          strokeWidth="2" fill="none" opacity=".6"/>
+        <text x="81" y="1220" fontSize="14.2" fill="#43576b" fontWeight="650">
+          Fuentes: Ley Orgánica de Educación y sus Reformas; Fundamentos Legales, Principios y Fines de la Educación Superior en Panamá.
+        </text>
+        <text x="81" y="1243" fontSize="13.2" fill="#7b868b">
+          Síntesis de materiales de la asignatura · Las conexiones con la administración universitaria son interpretaciones académicas.
+        </text>
+        <text x="1718" y="1243" fontSize="14.5" fontFamily="Georgia, 'Times New Roman', serif"
+          fontStyle="italic" textAnchor="end" fill="#495a69">{metadata.author}</text>
+      </g>
     </svg>
   );
 }
