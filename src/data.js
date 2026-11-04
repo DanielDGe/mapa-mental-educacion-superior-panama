@@ -102,13 +102,6 @@ export const sections = [
         relation: 'Debe reflejarse en normas internas, rendición de cuentas y evaluación.',
         source: 'Fundamentos Legales, Principios y Fines..., p. 2'
       },
-      {
-        id: 'compromiso', title: 'Compromiso social',
-        short: 'Responder al entorno',
-        detail: 'La universidad analiza tendencias sociales, culturales, económicas y políticas para anticipar necesidades y aportar alternativas de solución.',
-        relation: 'Conecta la planificación universitaria con los desafíos de Panamá.',
-        source: 'Fundamentos Legales, Principios y Fines..., pp. 1–2'
-      }
     ]
   },
   {
@@ -157,6 +150,13 @@ export const sections = [
         detail: 'Se busca generar conocimiento, transferirlo críticamente a la sociedad y contribuir al desarrollo del país mediante profesionales con conciencia social.',
         relation: 'Integra investigación, enseñanza, extensión y servicio a la comunidad.',
         source: 'Fundamentos Legales, Principios y Fines..., p. 2'
+      },
+      {
+        id: 'compromiso', title: 'Compromiso social',
+        short: 'Impacto en la comunidad',
+        detail: 'La universidad analiza tendencias sociales, culturales, económicas y políticas para anticipar necesidades y aportar alternativas de solución.',
+        relation: 'Conecta la planificación universitaria con los desafíos de Panamá.',
+        source: 'Fundamentos Legales, Principios y Fines..., pp. 1–2'
       }
     ]
   },
