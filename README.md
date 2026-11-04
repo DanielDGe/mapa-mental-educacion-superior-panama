@@ -1,46 +1,79 @@
 # Administración de la Educación Superior en Panamá
 
-Mapa mental digital e interactivo para la **Actividad Individual N.º 2, Unidad Didáctica II**, de la Maestría en Docencia Superior.
+Mapa mental digital para la **Actividad Individual N.º 2 · Unidad Didáctica II**, Maestría en Docencia Superior.
 
-## Tecnologías
-- React 18 + Vite
-- SVG vectorial para el mapa y sus conexiones
-- Exportación a SVG, PNG y PDF (impresión del navegador en A3 horizontal)
-- Sin backend ni claves de API
+Este repositorio contiene la aplicación React con dos propuestas de diseño:
 
-## Ejecutar localmente
-Requisitos: Node.js 18+ y npm.
+- **main:** primera versión del mapa con esquema de cuatro paneles.
+- **feature/editorial-organic-mindmap:** rediseño orgánico, radial y editorial para la entrega académica.
 
-~~~bash
+## Vista editorial (rama de trabajo)
+
+La segunda propuesta da protagonismo al mapa y evita el aspecto de tablero administrativo:
+- Ramas curvas dibujadas en SVG, con nodos de lectura libre y jerarquías visuales.
+- Cuatro grupos interrelacionados y distribución asimétrica: 6 fundamentos, 5 principios, 7 fines y 6 elementos de gestión.
+- Paleta inspirada en papel, tinta y acentos sobrios.
+- Texto sintético en el PDF; explicaciones ampliadas en la **Guía de lectura**.
+- Navegación, filtrado por rama, zoom, búsqueda y exportación vectorial o raster.
+
+**Nota:** el traslado de «Compromiso social» a la rama de fines es una decisión de organización conceptual; su explicación está fundamentada en los dos materiales de clase.
+
+## Prueba local
+
+Requiere Node.js 18 o superior y npm.
+
+~~~powershell
 git clone https://github.com/DanielDGe/mapa-mental-educacion-superior-panama.git
 cd mapa-mental-educacion-superior-panama
+git switch feature/editorial-organic-mindmap
 npm install
 npm run dev
 ~~~
 
-Abre la dirección local que muestre Vite (habitualmente http://localhost:5173).
+Si ya tienes el repositorio descargado:
 
-## Generar la versión de producción
+~~~powershell
+git fetch origin
+git switch feature/editorial-organic-mindmap
+npm install
+npm run dev
+~~~
+
+Vite muestra la dirección para abrir la aplicación (normalmente http://localhost:5173).
+
+## PDF para entregar en Canvas
+
+1. Abre la aplicación y revisa el mapa completo.
+2. Haz clic en **Exportar PDF**.
+3. En el diálogo de impresión del navegador, elige **Guardar como PDF**.
+4. Configura tamaño **A3**, orientación **horizontal**, márgenes **ninguno**, escala **100 %** y **gráficos de fondo** activados.
+5. Comprueba en la vista previa que el mapa ocupa **una sola página** y que el texto se ve legible.
+6. Guarda el documento para subirlo a Canvas.
+
+Desde los controles inferiores puedes descargar también **SVG** o **PNG** de alta resolución. Para la entrega, el formato solicitado por la profesora es PDF.
+
+## Comandos
+
 ~~~bash
+npm run dev
 npm run build
 npm run preview
 ~~~
 
-## Exportar para entregar
-1. Abre el mapa en la aplicación.
-2. Usa **PDF / Imprimir** y selecciona **Guardar como PDF**.
-3. Configura papel **A3**, orientación **horizontal**, escala **100 %**, márgenes **ninguno**, gráficos de fondo activados.
-4. Confirma que todo el mapa esté en una página antes de presentar el PDF.
+## Estructura
 
-También puedes exportar un SVG editable o PNG de alta resolución desde la interfaz.
+- \`src/data.js\`: conceptos, textos de apoyo, relaciones administrativas y fuentes.
+- \`src/MindMap.jsx\`: mapa SVG original, conexiones y nodos interactivos.
+- \`src/App.jsx\`: experiencia de usuario, guía desplegable, búsqueda, zoom y exportación.
+- \`src/styles.css\`: estilo editorial responsive y formato de impresión A3.
 
-## Organización
-- src/data.js: contenido académico, subramas, referencias y relaciones con la gestión.
-- src/MindMap.jsx: diagrama SVG y tarjetas interactivas.
-- src/App.jsx: barra de herramientas, filtrado, detalle y exportaciones.
-- src/styles.css: diseño responsive y estilos para impresión.
+## Fuentes y límites
 
-## Alcance académico
-La información sintetiza dos materiales entregados por la docente: *Ley Orgánica de Educación y sus Reformas* y *Fundamentos Legales, Principios y Fines de la Educación Superior en Panamá*. La rama de administración universitaria presenta conexiones interpretativas entre principios, fines y decisiones de gestión. Este trabajo **no verifica independientemente la vigencia actual** de todas las disposiciones citadas.
+El contenido está basado en dos documentos suministrados en la asignatura:
 
-> El producto para Canvas es el PDF de una sola página; el proyecto web es el medio de elaboración y revisión.
+1. *Ley Orgánica de Educación y sus Reformas*.
+2. *Fundamentos Legales, Principios y Fines de la Educación Superior en Panamá*.
+
+La rama de administración universitaria sintetiza **aplicaciones e interpretaciones didácticas** de esas fuentes. Este trabajo no pretende ser una comprobación jurídica independiente ni acreditar la vigencia actual de toda la normativa citada.
+
+> El código es una herramienta para preparar la actividad; el producto entregable es el mapa mental en PDF.
