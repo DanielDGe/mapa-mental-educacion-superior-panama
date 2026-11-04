@@ -21,8 +21,8 @@ function vectorMarkup() {
   if (!svg) throw new Error('No se encontró el mapa mental.');
   const clone = svg.cloneNode(true);
   clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-  clone.setAttribute('width', '1800');
-  clone.setAttribute('height', '1272');
+  clone.setAttribute('width', '2000');
+  clone.setAttribute('height', '1414');
   // El trabajo exportado siempre debe verse completo, aunque la pantalla tenga
   // una categoría filtrada.
   clone.querySelectorAll('[data-filterable]').forEach(element => {
@@ -55,8 +55,8 @@ async function exportPNG() {
       image.src = source;
     });
     const canvas = document.createElement('canvas');
-    canvas.width = 3600;
-    canvas.height = 2544;
+    canvas.width = 4000;
+    canvas.height = 2828;
     const context = canvas.getContext('2d');
     if (!context) throw new Error('El navegador no admite exportación PNG.');
     context.fillStyle = '#fcfaf5';
@@ -126,7 +126,7 @@ export default function App() {
   const onPDF = () => {
     setFocus('all');
     setSelectedId(null);
-    setStatus('Para entregar: selecciona Guardar como PDF, tamaño A3, horizontal, sin márgenes y gráficos de fondo activados.');
+    setStatus('Para entregar: selecciona Guardar como PDF, tamaño A3, horizontal, sin márgenes y gráficos de fondo activados. El mapa incluye las explicaciones de sus 24 conceptos.');
     window.setTimeout(() => window.print(), 220);
   };
   const onSVG = () => {
