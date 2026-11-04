@@ -34,7 +34,7 @@ const layout = {
     nodes: [
       [114, 820], [368, 828],
       [96, 912], [378, 906],
-      [122, 1096], [393, 1090]
+      [122, 1096], [393, 1090], [604, 1131]
     ]
   },
   gestion: {
@@ -142,7 +142,7 @@ function Branch({ section, selectedId, focus, onSelect }) {
   const s = layout[section.id];
   const faded = focus !== 'all' && focus !== section.id;
   const [hx, hy] = s.heading;
-  const headingX = hx + (s.side === 'left' ? -40 : 38);
+  const headingX = hx + (s.side === 'left' ? -10 : 38);
   const symbolX = hx + (s.side === 'left' ? -66 : -18);
   const sy = hy - 12;
   return (
