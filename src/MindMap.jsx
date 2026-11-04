@@ -14,35 +14,35 @@ const HEIGHT = 1272;
 
 const layout = {
   legal: {
-    root: [552, 340], heading: [418, 336], side: 'left', tier: 'top',
+    root: [410, 350], heading: [410, 350], side: 'left', tier: 'top',
     nodes: [
-      [118, 158], [375, 174],
-      [100, 265], [380, 250],
-      [102, 439], [433, 443]
+      [105, 175], [375, 175],
+      [95, 270], [375, 270],
+      [105, 465], [375, 465]
     ]
   },
   principios: {
-    root: [1248, 340], heading: [1304, 336], side: 'right', tier: 'top',
+    root: [1390, 350], heading: [1390, 350], side: 'right', tier: 'top',
     nodes: [
-      [1218, 163], [1502, 174],
-      [1230, 267], [1501, 265],
-      [1220, 434], [1507, 441]
+      [1205, 175], [1540, 175],
+      [1205, 270], [1540, 270],
+      [1205, 465], [1540, 465]
     ]
   },
   fines: {
-    root: [551, 952], heading: [426, 962], side: 'left', tier: 'bottom',
+    root: [410, 965], heading: [410, 965], side: 'left', tier: 'bottom',
     nodes: [
-      [114, 820], [368, 828],
-      [96, 883], [378, 878],
-      [122, 1096], [393, 1090], [670, 1146]
+      [110, 800], [395, 800],
+      [95, 895], [395, 895],
+      [110, 1088], [395, 1088], [675, 1143]
     ]
   },
   gestion: {
-    root: [1246, 952], heading: [1302, 962], side: 'right', tier: 'bottom',
+    root: [1390, 965], heading: [1390, 965], side: 'right', tier: 'bottom',
     nodes: [
-      [1210, 820], [1508, 824],
-      [1221, 881], [1511, 877],
-      [1218, 1098], [1505, 1090]
+      [1200, 800], [1530, 800],
+      [1200, 895], [1530, 895],
+      [1200, 1088], [1530, 1088]
     ]
   }
 };
@@ -73,10 +73,10 @@ function BranchSymbol({ section, x, y }) {
 
 function MainCurve({ section, focus }) {
   const paths = {
-    legal: 'M749 557 C696 534 665 431 591 372 S552 344 552 340',
-    principios: 'M1051 557 C1106 525 1133 435 1208 371 S1245 347 1248 340',
-    fines: 'M749 729 C687 767 660 882 580 931 S551 953 551 952',
-    gestion: 'M1051 729 C1116 769 1143 877 1215 930 S1245 951 1246 952'
+    legal: 'M749 557 C692 535 637 462 544 402 S460 355 410 350',
+    principios: 'M1051 557 C1108 535 1164 461 1258 404 S1340 355 1390 350',
+    fines: 'M749 729 C690 752 636 839 548 913 S463 957 410 965',
+    gestion: 'M1051 729 C1112 752 1167 839 1254 913 S1337 957 1390 965'
   };
   const faded = focus !== 'all' && focus !== section.id;
   return (
@@ -142,9 +142,9 @@ function Branch({ section, selectedId, focus, onSelect }) {
   const s = layout[section.id];
   const faded = focus !== 'all' && focus !== section.id;
   const [hx, hy] = s.heading;
-  const headingX = hx + (s.side === 'left' ? -10 : 38);
-  const symbolX = hx + (s.side === 'left' ? -66 : -18);
-  const sy = hy - 12;
+  const headingX = hx + (s.side === 'left' ? -52 : 52);
+  const symbolX = hx;
+  const sy = hy - 4;
   return (
     <g data-filterable="true" opacity={faded ? .18 : 1} style={{ transition: 'opacity 200ms ease' }}>
       {section.items.map((item, index) =>
@@ -154,9 +154,9 @@ function Branch({ section, selectedId, focus, onSelect }) {
       )}
       <g>
         <BranchSymbol section={section} x={symbolX} y={sy - 3} />
-        <text x={headingX} y={sy - 9} textAnchor="start" fontSize="31"
+        <text x={headingX} y={sy - 9} textAnchor={s.side === 'left' ? 'end' : 'start'} fontSize="31"
           fontWeight="760" fontFamily="Georgia, 'Times New Roman', serif"
-          letterSpacing="-.75" stroke="#fcfaf5" strokeWidth="9" paintOrder="stroke" fill={section.ink}>{headingParts[section.id][0]}</text>
+          letterSpacing="-.75" stroke="#fcfaf5" strokeWidth="7" paintOrder="stroke" fill={section.ink}>{headingParts[section.id][0]}</text>
         <text x={headingX} y={sy + 23} textAnchor="start" fontSize="31"
           fontWeight="760" fontFamily="Georgia, 'Times New Roman', serif"
           letterSpacing="-.75" stroke="#fcfaf5" strokeWidth="9" paintOrder="stroke" fill={section.ink}>{headingParts[section.id][1]}</text>
@@ -232,10 +232,10 @@ export default function MindMap({ selectedId, focus, onSelect }) {
           fill="none" stroke="#d9e6d4" opacity=".35" strokeWidth="2" />
         <text x="900" y="578" textAnchor="middle" fontSize="15.5"
           fill="#bfded0" letterSpacing="2.5" fontWeight="700">CONCEPTO CENTRAL</text>
-        <text x="900" y="628" textAnchor="middle" fontSize="35"
+        <text x="900" y="628" textAnchor="middle" fontSize="29.5"
           fontFamily="Georgia, 'Times New Roman', serif"
           fontWeight="700" fill="#fffaf0" letterSpacing="-.7">Administración de la</text>
-        <text x="900" y="672" textAnchor="middle" fontSize="39"
+        <text x="900" y="672" textAnchor="middle" fontSize="32"
           fontFamily="Georgia, 'Times New Roman', serif"
           fontWeight="700" fill="#fffaf0" letterSpacing="-.95">Educación Superior</text>
         <text x="900" y="710" textAnchor="middle" fontSize="25"
