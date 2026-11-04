@@ -30,7 +30,7 @@ const layout = {
     ]
   },
   fines: {
-    root: [410, 965], heading: [410, 965], side: 'left', tier: 'bottom',
+    root: [410, 983], heading: [410, 983], side: 'left', tier: 'bottom',
     nodes: [
       [110, 800], [395, 800],
       [95, 895], [395, 895],
@@ -38,7 +38,7 @@ const layout = {
     ]
   },
   gestion: {
-    root: [1390, 965], heading: [1390, 965], side: 'right', tier: 'bottom',
+    root: [1390, 983], heading: [1390, 983], side: 'right', tier: 'bottom',
     nodes: [
       [1200, 800], [1530, 800],
       [1200, 895], [1530, 895],
@@ -75,8 +75,8 @@ function MainCurve({ section, focus }) {
   const paths = {
     legal: 'M749 557 C692 535 637 462 544 402 S460 355 410 350',
     principios: 'M1051 557 C1108 535 1164 461 1258 404 S1340 355 1390 350',
-    fines: 'M749 729 C707 758 703 842 685 914 S540 1015 410 965',
-    gestion: 'M1051 729 C1093 758 1097 842 1115 914 S1260 1015 1390 965'
+    fines: 'M749 729 C707 758 703 842 685 914 S540 1015 410 983',
+    gestion: 'M1051 729 C1093 758 1097 842 1115 914 S1260 1015 1390 983'
   };
   const faded = focus !== 'all' && focus !== section.id;
   return (
@@ -139,50 +139,42 @@ function Leaf({ item, section, xy, index, selectedId, onSelect }) {
 }
 
 function Branch({ section, selectedId, focus, onSelect }) {
-  const s = layout[section.id];
+  const position = layout[section.id];
   const faded = focus !== 'all' && focus !== section.id;
-  const [hx, hy] = s.heading;
-  const headingX = hx + (s.side === 'left' ? -52 : 52);
-  const symbolX = hx;
-  const sy = hy - 4;
+  const [headingX, headingY] = position.heading;
   return (
-    <g data-filterable="true" opacity={faded ? .18 : 1} style={{ transition: 'opacity 200ms ease' }}>
+    <g data-filterable="true" opacity={faded ? .18 : 1}
+      style={{ transition: 'opacity 200ms ease' }}>
       {section.items.map((item, index) =>
-        <ThinCurve key={'stroke-' + item.id} from={s.root}
-          to={[s.nodes[index][0] - 20, s.nodes[index][1]]}
-          side={s.side} index={index} color={section.color} />
+        <ThinCurve key={'stroke-' + item.id} from={position.root}
+          to={[position.nodes[index][0] - 20, position.nodes[index][1]]}
+          side={position.side} index={index} color={section.color} />
       )}
+      {/* One labeled hub per branch keeps the connecting curves clear of text,
+          without turning the 24 concepts into uniform cards. */}
       <g>
-        <BranchSymbol section={section} x={symbolX} y={sy - 3} />
-        <text x={headingX} y={sy - 9} textAnchor={s.side === 'left' ? 'end' : 'start'} fontSize="31"
-          fontWeight="760" fontFamily="Georgia, 'Times New Roman', serif"
-          letterSpacing="-.75" stroke="#fcfaf5" strokeWidth="7" paintOrder="stroke" fill={section.ink}>{headingParts[section.id][0]}</text>
-        <text x={headingX} y={sy + 23} textAnchor="start" fontSize="31"
-          fontWeight="760" fontFamily="Georgia, 'Times New Roman', serif"
-          letterSpacing="-.75" stroke="#fcfaf5" strokeWidth="9" paintOrder="stroke" fill={section.ink}>{headingParts[section.id][1]}</text>
-        <path d={'M' + headingX + ' ' + (sy + 32) +
-          'q82 7 172 -1'}
-          stroke={section.color} strokeWidth="6" strokeLinecap="round"
-          fill="none" opacity=".45" />
+        <ellipse cx={headingX} cy={headingY} rx="191" ry="65"
+          fill={section.pale} opacity=".9" />
+        <ellipse cx={headingX} cy={headingY} rx="183" ry="57"
+          fill="#fffdfa" stroke={section.color} strokeOpacity=".82"
+          strokeWidth="2.6" />
+        <BranchSymbol section={section} x={headingX - 127} y={headingY} />
+        <text x={headingX + 17} y={headingY - 8} textAnchor="middle"
+          fontSize="28.5" fontWeight="730"
+          fontFamily="Georgia, 'Times New Roman', serif"
+          letterSpacing="-.7" fill={section.ink}>{headingParts[section.id][0]}</text>
+        <text x={headingX + 17} y={headingY + 24} textAnchor="middle"
+          fontSize="28.5" fontWeight="730"
+          fontFamily="Georgia, 'Times New Roman', serif"
+          letterSpacing="-.7" fill={section.ink}>{headingParts[section.id][1]}</text>
       </g>
       {section.items.map((item, index) => (
         <Leaf key={item.id} item={item} section={section}
-          xy={s.nodes[index]} index={index}
-          selectedId={selectedId} onSelect={onSelect}/>
+          xy={position.nodes[index]} index={index}
+          selectedId={selectedId} onSelect={onSelect} />
       ))}
     </g>
   );
-}
-
-function Doodle({ x, y, kind, color }) {
-  const curves = kind === 'star'
-    ? <path d="M0-22 5-6 23 0 5 6 0 23-5 6-23 0-5-6Z" />
-    : kind === 'rays'
-      ? <><circle r="9"/><path d="M0-25v7M0 18v7M-25 0h7M18 0h7M-18-18l6 6M12 12l6 6M18-18l-6 6M-12 12l-6 6"/></>
-      : <><path d="M-24 0c13-22 34-16 38 0S3 19-14 7"/><path d="M-18-13c4 8 18 9 24 1"/></>;
-  return <g transform={'translate(' + x + ' ' + y + ')'}
-    fill="none" stroke={color} strokeWidth="3" strokeLinecap="round"
-    strokeLinejoin="round" opacity=".36">{curves}</g>;
 }
 
 export default function MindMap({ selectedId, focus, onSelect }) {
