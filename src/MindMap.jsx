@@ -16,9 +16,9 @@ const layout = {
   legal: {
     root: [410, 350], heading: [410, 350], side: 'left', tier: 'top',
     nodes: [
-      [105, 175], [375, 175],
-      [95, 270], [375, 270],
-      [105, 465], [375, 465]
+      [105, 175], [440, 175],
+      [95, 270], [440, 270],
+      [105, 465], [440, 465]
     ]
   },
   principios: {
@@ -75,8 +75,8 @@ function MainCurve({ section, focus }) {
   const paths = {
     legal: 'M749 557 C692 535 637 462 544 402 S460 355 410 350',
     principios: 'M1051 557 C1108 535 1164 461 1258 404 S1340 355 1390 350',
-    fines: 'M749 729 C690 752 636 839 548 913 S463 957 410 965',
-    gestion: 'M1051 729 C1112 752 1167 839 1254 913 S1337 957 1390 965'
+    fines: 'M749 729 C707 758 703 842 685 914 S540 1015 410 965',
+    gestion: 'M1051 729 C1093 758 1097 842 1115 914 S1260 1015 1390 965'
   };
   const faded = focus !== 'all' && focus !== section.id;
   return (
@@ -214,10 +214,6 @@ export default function MindMap({ selectedId, focus, onSelect }) {
         FUNDAMENTOS · PRINCIPIOS · FINES · ADMINISTRACIÓN
       </text>
 
-      <Doodle x={729} y={172} color="#3566c9" kind="star"/>
-      <Doodle x={1089} y={212} color="#138879" kind="rays"/>
-      <Doodle x={765} y={1038} color="#d78b23" kind="leaves"/>
-      <Doodle x={1062} y={1088} color="#8b5bc0" kind="star"/>
 
       {sections.map(s => <MainCurve key={'main-' + s.id} section={s} focus={focus} />)}
       {sections.map(s => <Branch key={s.id} section={s}
