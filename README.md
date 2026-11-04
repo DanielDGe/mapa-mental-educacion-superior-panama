@@ -13,7 +13,8 @@ La segunda propuesta da protagonismo al mapa y evita el aspecto de tablero admin
 - Ramas curvas dibujadas en SVG, con nodos de lectura libre y jerarquías visuales.
 - Cuatro grupos interrelacionados y distribución asimétrica: 6 fundamentos, 5 principios, 7 fines y 6 elementos de gestión.
 - Paleta inspirada en papel, tinta y acentos sobrios.
-- Texto sintético en el PDF; explicaciones ampliadas en la **Guía de lectura**.
+- Cada uno de los 24 conceptos incorpora una explicación natural de hasta tres líneas, legible sin abrir la **Guía de lectura**.
+- La guía web amplía cada tema y muestra su relación con la administración universitaria.
 - Navegación, filtrado por rama, zoom, búsqueda y exportación vectorial o raster.
 
 **Nota:** el traslado de «Compromiso social» a la rama de fines es una decisión de organización conceptual; su explicación está fundamentada en los dos materiales de clase.
@@ -48,7 +49,8 @@ Vite muestra la dirección para abrir la aplicación (normalmente http://localho
 3. En el diálogo de impresión del navegador, elige **Guardar como PDF**.
 4. Configura tamaño **A3**, orientación **horizontal**, márgenes **ninguno**, escala **100 %** y **gráficos de fondo** activados.
 5. Comprueba en la vista previa que el mapa ocupa **una sola página** y que el texto se ve legible.
-6. Guarda el documento para subirlo a Canvas.
+6. Comprueba que se ven los títulos y las frases de todos los conceptos, sin necesidad de hacer clic.
+7. Guarda el documento para subirlo a Canvas.
 
 Desde los controles inferiores puedes descargar también **SVG** o **PNG** de alta resolución. Para la entrega, el formato solicitado por la profesora es PDF.
 
@@ -56,6 +58,7 @@ Desde los controles inferiores puedes descargar también **SVG** o **PNG** de al
 
 ~~~bash
 npm run dev
+npm test
 npm run build
 npm run preview
 ~~~
