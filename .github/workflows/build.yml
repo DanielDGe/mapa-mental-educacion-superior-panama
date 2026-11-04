@@ -22,5 +22,7 @@ jobs:
           node-version: "22"
       - name: Install dependencies
         run: npm install
+      - name: Validate academic content
+        run: npm test
       - name: Production build
         run: npm run build
