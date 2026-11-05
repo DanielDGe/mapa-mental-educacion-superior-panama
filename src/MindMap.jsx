@@ -18,11 +18,11 @@ const geometry = {
   },
   fines: {
     hub: [550, 838], quadrant: 'bottom-left',
-    nodes: [[84, 933], [480, 933], [84, 1060], [480, 1060], [84, 1187], [480, 1187], [825, 1187]]
+    nodes: [[84, 933], [480, 933], [84, 1060], [480, 1060], [84, 1164], [480, 1164], [790, 1270]]
   },
   gestion: {
     hub: [1450, 838], quadrant: 'bottom-right',
-    nodes: [[1160, 933], [1570, 933], [1160, 1060], [1570, 1060], [1160, 1187], [1570, 1187]]
+    nodes: [[1160, 933], [1570, 933], [1160, 1060], [1570, 1060], [1160, 1164], [1570, 1164]]
   }
 };
 
@@ -90,8 +90,8 @@ function Trunk({ section, dim }) {
     ' ' + midpoint + ' ' + endY + ' ' + endX + ' ' + endY;
   return (
     <g data-filterable="true" opacity={dim ? '.20' : '1'}>
-      <path d={d} stroke={section.pale} strokeWidth="23" fill="none" strokeLinecap="round"/>
-      <path d={d} stroke={section.color} strokeWidth="9.5" fill="none" strokeLinecap="round"/>
+      <path d={d} stroke={section.pale} strokeWidth="17" fill="none" strokeLinecap="round"/>
+      <path d={d} stroke={section.color} strokeWidth="7.2" fill="none" strokeLinecap="round"/>
     </g>
   );
 }
@@ -113,17 +113,18 @@ function Twig({ section, index, node }) {
     (finishY + (top ? 19 : -19)) +
     ' ' + finishX + ' ' + finishY;
   return <path d={d} fill="none" stroke={section.color}
-    strokeWidth={index % 2 === 0 ? 2.7 : 2.3}
-    opacity=".38" strokeLinecap="round"/>;
+    strokeWidth={index % 2 === 0 ? 1.75 : 1.55}
+    opacity=".23" strokeLinecap="round"/>;
 }
 
 function Concept({ item, section, coords, selectedId, onSelect }) {
   const [x, y] = coords;
   const small = item.id === 'compromiso';
   const boxWidth = small ? 325 : 380;
-  const fontSize = small ? 14.5 : 16.2;
-  const lines = wrapSentence(item.mapText || item.short, fontSize, small ? 307 : 343);
+  const fontSize = small ? 16 : 16.8;
+  const lines = wrapSentence(item.mapText || item.short, fontSize, small ? 298 : 343);
   const selected = selectedId === item.id;
+  const boxHeight = lines.length > 2 ? 111 : 92;
   return (
     <g role="button" tabIndex={0}
       aria-label={item.title + '. ' + (item.mapText || item.short)}
@@ -135,8 +136,8 @@ function Concept({ item, section, coords, selectedId, onSelect }) {
       }}
       style={{ cursor: 'pointer' }}>
       <title>{item.title}. {item.mapText || item.short}</title>
-      <rect x={x - 17} y={y - 27} width={boxWidth + 16}
-        height={105} rx="13"
+      <rect x={x - 17} y={y - 25} width={boxWidth + 16}
+        height={boxHeight} rx="13"
         fill={selected ? section.pale : '#fcfaf5'}
         stroke={selected ? section.color : 'none'}
         strokeWidth={selected ? 2.6 : 0} />
@@ -146,12 +147,12 @@ function Concept({ item, section, coords, selectedId, onSelect }) {
       <text x={x + 16} y={y + 3} fontFamily="Arial, sans-serif" fontSize="20.5"
         fontWeight="730" fill="#233949"
         letterSpacing="-.42">{item.title}</text>
-      <path d={'M' + (x + 16) + ' ' + (y + 12) + 'h' + (small ? 252 : 332)}
-        stroke={section.color} opacity=".33" strokeWidth="1.8" />
+      <path d={'M' + (x + 16) + ' ' + (y + 12) + 'h' + (small ? 142 : 164)}
+        stroke={section.color} opacity=".25" strokeWidth="1.5" />
       <text x={x + 16} y={y + 32} fontFamily="Arial, sans-serif" fontSize={fontSize}
-        fontWeight="440" fill="#54636a" letterSpacing="-.04">
+        fontWeight="440" fill="#4e5e68" letterSpacing="-.04">
         {lines.map((line, i) =>
-          <tspan key={i} x={x + 16} dy={i === 0 ? 0 : 20.6}>{line}</tspan>)}
+          <tspan key={i} x={x + 16} dy={i === 0 ? 0 : 22}>{line}</tspan>)}
       </text>
     </g>
   );
