@@ -1,31 +1,12 @@
 import React from 'react';
 import { metadata, sections } from './data.js';
-import { getConnectionPath } from './mapConnections.js';
+import { geometry, getConnectionPath } from './mapConnections.js';
 
 // SVG autónomo: todo el contenido permanece visible al descargar PNG o PDF.
 // Cada idea lleva una frase natural y suficiente para comprenderla sin el panel lateral.
 const WIDTH = 2000;
 const HEIGHT = 1414;
 const CENTER = [1000, 706];
-
-const geometry = {
-  legal: {
-    hub: [550, 597], quadrant: 'top-left',
-    nodes: [[84, 163], [480, 163], [84, 296], [480, 296], [84, 429], [480, 429]]
-  },
-  principios: {
-    hub: [1450, 597], quadrant: 'top-right',
-    nodes: [[1160, 163], [1570, 163], [1160, 296], [1570, 296], [1160, 429]]
-  },
-  fines: {
-    hub: [550, 838], quadrant: 'bottom-left',
-    nodes: [[84, 933], [480, 933], [84, 1060], [480, 1060], [84, 1164], [480, 1164], [805, 1253]]
-  },
-  gestion: {
-    hub: [1450, 838], quadrant: 'bottom-right',
-    nodes: [[1160, 933], [1570, 933], [1160, 1060], [1570, 1060], [1160, 1164], [1570, 1164]]
-  }
-};
 
 const headings = {
   legal: ['Fundamentos', 'legales'],
