@@ -21,7 +21,7 @@ export const sections = [
       {
         id: 'constitucion', title: 'Constitución Política',
         short: 'Arts. 91, 92, 93 y 96',
-        mapText: 'La Constitución reconoce el derecho a la educación y orienta las responsabilidades del Estado en el sistema educativo.',
+        mapText: 'Reconoce el derecho a la educación y orienta los deberes educativos del Estado.',
         detail: 'La Constitución Política de Panamá constituye la base del derecho a la educación y de las responsabilidades públicas vinculadas a su organización. El material de la unidad identifica especialmente los artículos 91, 92, 93 y 96.',
         relation: 'Orienta las garantías y compromisos que la universidad debe respetar.',
         source: 'Fundamentos Legales, Principios y Fines..., p. 1'
@@ -29,7 +29,7 @@ export const sections = [
       {
         id: 'ley47', title: 'Ley Orgánica de Educación',
         short: 'Ley 47/1946 · Ley 34/1995',
-        mapText: 'La Ley 47 organiza el sistema educativo panameño. Sus reformas han ajustado normas para su funcionamiento.',
+        mapText: 'Organiza el sistema educativo panameño; sus reformas actualizan ese marco.',
         detail: 'La Ley 47 de 1946 estructura la educación panameña. El material presenta sus modificaciones por la Ley 34 de 1995 y también menciona reformas posteriores mediante las leyes 50 de 2002 y 60 de 2003.',
         relation: 'Ofrece el marco general para organizar, planificar y supervisar la educación.',
         source: 'Ley Orgánica de Educación y sus Reformas, p. 2'
@@ -37,7 +37,7 @@ export const sections = [
       {
         id: 'regimen', title: 'Régimen universitario',
         short: 'Art. 6: leyes especiales',
-        mapText: 'Las universidades se rigen por leyes especiales que orientan su organización y funcionamiento institucional.',
+        mapText: 'La educación universitaria se rige por leyes especiales y normas propias.',
         detail: 'El documento sobre la Ley Orgánica recuerda que la educación universitaria se rige por leyes especiales, en el marco de la coordinación y supervisión educativa mencionada en el material.',
         relation: 'Vincula el régimen general educativo con la organización propia de cada institución.',
         source: 'Ley Orgánica de Educación y sus Reformas, p. 3'
@@ -45,7 +45,7 @@ export const sections = [
       {
         id: 'articulos', title: 'Tercer nivel de enseñanza',
         short: 'Arts. 59 a 62',
-        mapText: 'Los artículos 59 al 62 vinculan formación profesional, investigación y recursos con el desarrollo del país.',
+        mapText: 'Vinculan formación profesional, investigación y recursos con el desarrollo del país.',
         detail: 'El artículo 59 aborda formación profesional, investigación y cultura; el 60 sitúa la oferta de educación superior y la relaciona con las necesidades del país; el 61 destaca la calidad de la docencia, la investigación y la extensión; el 62 se refiere a recursos y facilidades del Estado.',
         relation: 'Fundamenta la oferta académica, la calidad y la asignación de recursos.',
         source: 'Ley Orgánica de Educación y sus Reformas, pp. 4–5'
@@ -53,7 +53,7 @@ export const sections = [
       {
         id: 'privadas', title: 'Universidades particulares',
         short: 'Decreto Ley 16 de 1963',
-        mapText: 'El Decreto Ley 16 de 1963 reconoce la creación de universidades particulares, sujetas a las normas legales aplicables.',
+        mapText: 'Reconoce la creación de universidades particulares sujetas a la ley.',
         detail: 'El material señala que el artículo 1 del Decreto Ley 16 de 11 de julio de 1963 reconoce la posibilidad de crear y hacer funcionar universidades privadas, sujetas a la normativa aplicable.',
         relation: 'Relaciona la creación y funcionamiento institucional con exigencias legales.',
         source: 'Fundamentos Legales, Principios y Fines..., p. 1'
@@ -61,7 +61,7 @@ export const sections = [
       {
         id: 'complementarias', title: 'Normas complementarias',
         short: 'Decretos y resueltos citados',
-        mapText: 'Los decretos y resueltos citados complementan el marco legal que orienta la gestión universitaria.',
+        mapText: 'Decretos y resueltos complementan las normas de la gestión universitaria.',
         detail: 'El documento enumera el Decreto 161 de 1996, el Decreto 50 de 1999, el Resuelto 1139 de 1999 y el Resuelto 1141 de 1998 (vinculado a modificaciones del Decreto Ejecutivo 203 de 1996). Se citan conforme al material, sin atribuirles aquí funciones no explicadas en él.',
         relation: 'Recuerda que la gestión debe consultar las disposiciones específicas aplicables.',
         source: 'Fundamentos Legales, Principios y Fines..., p. 1'
@@ -76,7 +76,7 @@ export const sections = [
       {
         id: 'formacion', title: 'Formación especializada',
         short: 'Profesionales para el país',
-        mapText: 'La universidad forma profesionales capaces de aplicar sus conocimientos y responder a los retos del país.',
+        mapText: 'Forma profesionales preparados para responder a los desafíos del país.',
         detail: 'La educación superior busca formar profesionales especializados capaces de responder a necesidades reales del desarrollo nacional, integrando conocimiento y cultura.',
         relation: 'Exige programas pertinentes y perfiles de egreso vinculados al contexto.',
         source: 'Fundamentos Legales, Principios y Fines..., p. 1'
@@ -84,7 +84,7 @@ export const sections = [
       {
         id: 'excelencia', title: 'Excelencia académica',
         short: 'Docencia de alta calidad',
-        mapText: 'Se busca una docencia de alta calidad, acompañada de cultura general y preparación para el ejercicio profesional.',
+        mapText: 'Promueve una docencia de calidad y una formación profesional integral.',
         detail: 'Se propone mantener niveles elevados de docencia y una cultura general amplia, junto con la investigación, extensión y servicios profesionales.',
         relation: 'Se concreta en formación docente, evaluación y mejora continua.',
         source: 'Fundamentos Legales, Principios y Fines..., p. 1'
@@ -92,7 +92,7 @@ export const sections = [
       {
         id: 'investigacion', title: 'Investigación y cultura',
         short: 'Crear y difundir saberes',
-        mapText: 'Investigar y compartir conocimientos fortalece la cultura y ayuda a comprender mejor los problemas de la sociedad.',
+        mapText: 'Investigar y difundir saberes ayuda a comprender los retos sociales.',
         detail: 'La investigación y la difusión de la cultura nacional y universal forman parte de la misión universitaria descrita en los materiales.',
         relation: 'Impulsa proyectos, producción académica y extensión universitaria.',
         source: 'Fundamentos Legales, Principios y Fines..., p. 1'
@@ -100,7 +100,7 @@ export const sections = [
       {
         id: 'autonomia', title: 'Autonomía universitaria',
         short: 'Criterio y función crítica',
-        mapText: 'La autonomía permite desarrollar una función crítica con rigor, responsabilidad y compromiso con la realidad nacional.',
+        mapText: 'Permite una mirada crítica, con rigor y responsabilidad institucional.',
         detail: 'La autonomía se presenta como capacidad institucional para desarrollar una función crítica, observar problemas sociales y proponer soluciones con responsabilidad.',
         relation: 'Requiere tomar decisiones académicas justificadas y transparentes.',
         source: 'Fundamentos Legales, Principios y Fines..., p. 2'
@@ -108,7 +108,7 @@ export const sections = [
       {
         id: 'etica', title: 'Ética y transparencia',
         short: 'Rigor y responsabilidad',
-        mapText: 'La ética, la transparencia y el rigor científico deben estar presentes en las decisiones de cada universidad.',
+        mapText: 'La ética y la transparencia fortalecen las decisiones universitarias.',
         detail: 'El material relaciona la autonomía y la función crítica con el trabajo ético, transparente y científicamente riguroso.',
         relation: 'Debe reflejarse en normas internas, rendición de cuentas y evaluación.',
         source: 'Fundamentos Legales, Principios y Fines..., p. 2'
@@ -123,7 +123,7 @@ export const sections = [
       {
         id: 'derechos', title: 'Derechos y equidad',
         short: 'Justicia social y respeto',
-        mapText: 'Formar con respeto a los derechos humanos ayuda a promover la equidad y la justicia social.',
+        mapText: 'Promueve el respeto a los derechos humanos, la equidad y la justicia social.',
         detail: 'La educación superior debe promover derechos humanos, equidad y justicia social, fomentando una convivencia más respetuosa e inclusiva.',
         relation: 'Orienta la atención estudiantil y las políticas de igualdad de oportunidades.',
         source: 'Fundamentos Legales, Principios y Fines..., p. 2'
@@ -131,7 +131,7 @@ export const sections = [
       {
         id: 'pensamiento', title: 'Pensamiento crítico',
         short: 'Reflexión y emprendimiento',
-        mapText: 'Busca formar estudiantes capaces de analizar problemas, proponer soluciones y desarrollar iniciativas emprendedoras.',
+        mapText: 'Impulsa estudiantes que analizan, proponen y emprenden soluciones.',
         detail: 'Entre los fines se menciona formar personas capaces de analizar problemas, cuestionar ideas y desarrollar iniciativas emprendedoras.',
         relation: 'Invita a diseñar experiencias de aprendizaje activas y contextualizadas.',
         source: 'Fundamentos Legales, Principios y Fines..., p. 2'
@@ -139,7 +139,7 @@ export const sections = [
       {
         id: 'cultura', title: 'Identidad y cultura',
         short: 'Difusión y creación cultural',
-        mapText: 'La universidad difunde la cultura y fortalece los valores que forman parte de nuestra identidad nacional.',
+        mapText: 'Difunde la cultura y fortalece los valores de la identidad nacional.',
         detail: 'La universidad contribuye a difundir los aspectos culturales y a crear nuevas expresiones de cultura, reconociendo la identidad nacional.',
         relation: 'Favorece programas de extensión y contenidos pertinentes al entorno.',
         source: 'Fundamentos Legales, Principios y Fines..., p. 2'
@@ -147,7 +147,7 @@ export const sections = [
       {
         id: 'sostenible', title: 'Desarrollo sostenible',
         short: 'Ambiente y progreso social',
-        mapText: 'Promueve una formación comprometida con el cuidado del ambiente, el progreso social y el desarrollo sostenible.',
+        mapText: 'Promueve el cuidado ambiental y el desarrollo social sostenible.',
         detail: 'La educación superior debe promover la protección ambiental, el progreso social y el desarrollo sostenible.',
         relation: 'Se traduce en proyectos institucionales y currículos comprometidos con el futuro.',
         source: 'Fundamentos Legales, Principios y Fines..., p. 2'
@@ -155,7 +155,7 @@ export const sections = [
       {
         id: 'innovacion', title: 'Innovación tecnológica',
         short: 'Apoyo al sector productivo',
-        mapText: 'Estimula la actualización tecnológica en los sectores público y privado para contribuir al desarrollo nacional.',
+        mapText: 'Apoya la actualización tecnológica y el desarrollo del país.',
         detail: 'El documento plantea estimular a los sectores público y privado en sus procesos de actualización e innovación tecnológica.',
         relation: 'Impulsa la actualización curricular y la vinculación con el entorno laboral.',
         source: 'Fundamentos Legales, Principios y Fines..., p. 2'
@@ -163,7 +163,7 @@ export const sections = [
       {
         id: 'conocimiento', title: 'Conocimiento para servir',
         short: 'Generación y transferencia',
-        mapText: 'El conocimiento no debe quedarse en el aula: también debe compartirse y convertirse en aportes para la sociedad.',
+        mapText: 'El saber se comparte y se transforma en aportes para la sociedad.',
         detail: 'Se busca generar conocimiento, transferirlo críticamente a la sociedad y contribuir al desarrollo del país mediante profesionales con conciencia social.',
         relation: 'Integra investigación, enseñanza, extensión y servicio a la comunidad.',
         source: 'Fundamentos Legales, Principios y Fines..., p. 2'
@@ -171,7 +171,7 @@ export const sections = [
       {
         id: 'compromiso', title: 'Compromiso social',
         short: 'Impacto en la comunidad',
-        mapText: 'La formación universitaria cobra sentido cuando responde a necesidades reales y contribuye al bienestar del país.',
+        mapText: 'Formarse también significa aportar al bienestar colectivo.',
         detail: 'La universidad analiza tendencias sociales, culturales, económicas y políticas para anticipar necesidades y aportar alternativas de solución.',
         relation: 'Conecta la planificación universitaria con los desafíos de Panamá.',
         source: 'Fundamentos Legales, Principios y Fines..., pp. 1–2'
@@ -186,7 +186,7 @@ export const sections = [
       {
         id: 'planificacion', title: 'Planificación académica',
         short: 'Objetivos y oferta formativa',
-        mapText: 'Organiza los programas, las prioridades y las acciones académicas considerando las necesidades del entorno.',
+        mapText: 'Organiza programas y prioridades según las necesidades del entorno.',
         detail: 'La gestión organiza prioridades, programas, recursos y metas, considerando las necesidades socioeconómicas, culturales, científicas y profesionales mencionadas en el artículo 60 del material.',
         relation: 'Convierte el marco legal y la misión institucional en acciones concretas.',
         source: 'Interpretación de gestión; Ley Orgánica..., p. 4'
@@ -194,7 +194,7 @@ export const sections = [
       {
         id: 'curriculo', title: 'Actualización curricular',
         short: 'Pertinencia y articulación',
-        mapText: 'Revisar los planes de estudio permite equilibrar formación general, especialización y necesidades sociales.',
+        mapText: 'Actualiza los planes de estudio frente a los cambios de la sociedad.',
         detail: 'La presentación sobre la Ley Orgánica cita el artículo 246, que relaciona los planes de educación superior con la articulación entre niveles y el equilibrio entre formación general y especializada.',
         relation: 'Permite ajustar programas a necesidades sociales y tecnológicas.',
         source: 'Interpretación de gestión; Ley Orgánica..., p. 7'
@@ -202,7 +202,7 @@ export const sections = [
       {
         id: 'calidad', title: 'Evaluación de la calidad',
         short: 'Seguimiento y mejora',
-        mapText: 'Evaluar la docencia y sus resultados permite reconocer dificultades, corregirlas y mejorar la calidad.',
+        mapText: 'Evalúa resultados para corregir dificultades y mejorar la docencia.',
         detail: 'Los materiales destacan la calidad de la docencia y la evaluación de las funciones de la educación superior como responsabilidad permanente.',
         relation: 'Se expresa en indicadores, revisión de resultados y mejora continua.',
         source: 'Interpretación de gestión; Fundamentos..., p. 2'
@@ -210,7 +210,7 @@ export const sections = [
       {
         id: 'recursos', title: 'Gestión de recursos',
         short: 'Talento, tecnología y medios',
-        mapText: 'Organizar personal, tecnología e infraestructura hace posible la docencia, la investigación y la extensión.',
+        mapText: 'Coordina personal y tecnología para sostener las tareas universitarias.',
         detail: 'La administración necesita coordinar personal, infraestructura, tecnología y presupuesto. El artículo 62 destaca las facilidades técnicas y recursos para impulsar la educación superior.',
         relation: 'Hace posible ejecutar los planes con eficiencia y responsabilidad.',
         source: 'Interpretación de gestión; Ley Orgánica..., p. 5'
@@ -218,7 +218,7 @@ export const sections = [
       {
         id: 'academica', title: 'Docencia e investigación',
         short: 'Enseñar, investigar, extender',
-        mapText: 'Articula docencia, investigación y extensión para que lo aprendido tenga un impacto más allá de las aulas.',
+        mapText: 'Integra enseñanza, investigación y extensión al servicio de la sociedad.',
         detail: 'La universidad articula enseñanza de calidad, generación de conocimiento y extensión científica, técnica y cultural, de acuerdo con los objetivos citados en el artículo 61.',
         relation: 'Une el trabajo del profesorado con los fines educativos y sociales.',
         source: 'Interpretación de gestión; Ley Orgánica..., p. 4'
@@ -226,7 +226,7 @@ export const sections = [
       {
         id: 'gobernanza', title: 'Gobernanza responsable',
         short: 'Ética, autonomía y control',
-        mapText: 'Las autoridades deben decidir con criterios académicos, transparencia y responsabilidad ante su comunidad.',
+        mapText: 'Orienta decisiones con criterios académicos, ética y transparencia.',
         detail: 'Las autoridades universitarias deben organizar decisiones, comunicar resultados y mantener mecanismos de seguimiento coherentes con los principios de autonomía, transparencia y rigor.',
         relation: 'Da coherencia entre misión, decisiones administrativas y bienestar social.',
         source: 'Interpretación de gestión; Fundamentos..., p. 2'
