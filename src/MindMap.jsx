@@ -1,5 +1,6 @@
 import React from 'react';
 import { metadata, sections } from './data.js';
+import { getConnectionPath } from './mapConnections.js';
 
 // SVG autónomo: todo el contenido permanece visible al descargar PNG o PDF.
 // Cada idea lleva una frase natural y suficiente para comprenderla sin el panel lateral.
@@ -18,7 +19,7 @@ const geometry = {
   },
   fines: {
     hub: [550, 838], quadrant: 'bottom-left',
-    nodes: [[84, 933], [480, 933], [84, 1060], [480, 1060], [84, 1164], [480, 1164], [790, 1270]]
+    nodes: [[84, 933], [480, 933], [84, 1060], [480, 1060], [84, 1164], [480, 1164], [805, 1253]]
   },
   gestion: {
     hub: [1450, 838], quadrant: 'bottom-right',
@@ -96,31 +97,23 @@ function Trunk({ section, dim }) {
   );
 }
 
-function Twig({ section, index, node }) {
+function Twig({ section, index }) {
   const geo = geometry[section.id];
-  const [hubX, hubY] = geo.hub;
-  const [nx, ny] = node;
-  const top = geo.quadrant.startsWith('top');
-  const startY = hubY + (top ? -38 : 38);
-  const finishX = nx + 7;
-  const finishY = ny + (top ? 10 : -12);
-  // El trazo pasa por detrás del texto, protegido por una máscara del
-  // mismo tono que la lámina. Así los conectores nunca tapan las frases.
-  const d = 'M' + (hubX + (nx < hubX ? -24 : 24)) + ' ' + startY +
-    ' C' + (nx + (nx < hubX ? 110 : -90)) + ' ' +
-    (startY + (top ? -54 : 53)) +
-    ' ' + (finishX + (nx < hubX ? 22 : -22)) + ' ' +
-    (finishY + (top ? 19 : -19)) +
-    ' ' + finishX + ' ' + finishY;
-  return <path d={d} fill="none" stroke={section.color}
-    strokeWidth={index % 2 === 0 ? 1.75 : 1.55}
-    opacity=".23" strokeLinecap="round"/>;
+  // Las curvas atraviesan corredores vacíos y terminan en el mismo punto que
+  // el círculo del concepto. No usamos máscaras que oculten su tramo final.
+  const d = getConnectionPath(section, index, geo);
+  return (
+    <path d={d} fill="none" stroke={section.color}
+      strokeWidth={section.id === 'fines' && index === 6 ? 2.1 : 1.65}
+      opacity={section.id === 'fines' && index === 6 ? '.47' : '.32'}
+      strokeLinecap="round" strokeLinejoin="round"/>
+  );
 }
 
 function Concept({ item, section, coords, selectedId, onSelect }) {
   const [x, y] = coords;
   const small = item.id === 'compromiso';
-  const boxWidth = small ? 325 : 380;
+  const boxWidth = small ? 310 : 345;
   const fontSize = small ? 16 : 16.8;
   const lines = wrapSentence(item.mapText || item.short, fontSize, small ? 298 : 343);
   const selected = selectedId === item.id;
@@ -136,7 +129,7 @@ function Concept({ item, section, coords, selectedId, onSelect }) {
       }}
       style={{ cursor: 'pointer' }}>
       <title>{item.title}. {item.mapText || item.short}</title>
-      <rect x={x - 17} y={y - 25} width={boxWidth + 16}
+      <rect x={x + 11} y={y - 25} width={boxWidth + 16}
         height={boxHeight} rx="13"
         fill={selected ? section.pale : '#fcfaf5'}
         stroke={selected ? section.color : 'none'}
@@ -185,7 +178,7 @@ function Section({ section, focus, selectedId, onSelect }) {
   return (
     <g data-filterable="true" opacity={dim ? '.20' : '1'}>
       {section.items.map((_,i) =>
-        <Twig section={section} index={i} node={geo.nodes[i]} key={i}/>)}
+        <Twig section={section} index={i} key={i}/>)}
       <Hub section={section}/>
       {section.items.map((item,i) =>
         <Concept key={item.id} item={item} section={section}
