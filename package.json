@@ -7,7 +7,7 @@
     "dev": "vite --host",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "node scripts/validate-map.mjs"
+    "test": "node scripts/validate-map.mjs && node scripts/validate-connections.mjs"
   },
   "dependencies": {
     "react": "^18.3.1",
