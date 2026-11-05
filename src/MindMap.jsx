@@ -58,35 +58,61 @@ function SectionSymbol({ id, x, y, section }) {
   );
 }
 
-function Trunk({ section, geo, dim, editMode, activeEdit, onStartDrag }) {
-  const { hub, quadrant } = geometry[section.id];
-  const upper = quadrant.startsWith('top');
-  const left = quadrant.endsWith('left');
-  const fromX = CENTER[0] + (left ? -208 : 208);
-  const fromY = CENTER[1] + (upper ? -53 : 65);
-  const endX = hub[0] + (left ? 176 : -176);
-  const endY = hub[1] + (upper ? 13 : -9);
-  const midpoint = (fromX + endX) / 2;
-  const d = 'M' + fromX + ' ' + fromY +
-    ' C' + midpoint + ' ' + fromY +
-    ' ' + midpoint + ' ' + endY + ' ' + endX + ' ' + endY;
+function Trunk({ section, geo, dim, editMode, activeEdit, onStartDrag, bend }) {
+  const d = getTrunkPath(geo, bend);
+  const selected = activeEdit?.type === 'trunk' && activeEdit.sectionId === section.id;
+  const [hx, hy] = getTrunkHandle(geo, bend);
   return (
     <g data-filterable="true" opacity={dim ? '.20' : '1'}>
-      <path d={d} stroke={section.pale} strokeWidth="17" fill="none" strokeLinecap="round"/>
-      <path d={d} stroke={section.color} strokeWidth="7.2" fill="none" strokeLinecap="round"/>
+      <path d={d} stroke={section.pale} strokeWidth="17"
+        fill="none" strokeLinecap="round"/>
+      <path d={d} stroke={section.color} strokeWidth="7.2"
+        fill="none" strokeLinecap="round"/>
+      {editMode && <>
+        <path data-editor-only="true" d={d} stroke="transparent"
+          strokeWidth="32" fill="none"
+          style={{ cursor: 'move' }}
+          onPointerDown={e => onStartDrag(e, { type: 'trunk', sectionId: section.id })}/>
+        {selected && <g data-editor-only="true"
+          onPointerDown={e => onStartDrag(e, { type: 'trunk', sectionId: section.id })}
+          style={{ cursor: 'move' }}>
+          <circle cx={hx} cy={hy} r="17" fill="#fff"
+            stroke={section.color} strokeWidth="3"/>
+          <circle cx={hx} cy={hy} r="5" fill={section.color}/>
+        </g>}
+      </>}
     </g>
   );
 }
 
 function Twig({ section, index, geo, editMode, activeEdit, onStartDrag, bend }) {
-  // Las curvas atraviesan corredores vacíos y terminan en el mismo punto que
-  // el círculo del concepto. No usamos máscaras que oculten su tramo final.
   const d = getConnectionPath(section, index, geo, bend);
+  const selected = activeEdit?.type === 'bend' &&
+    activeEdit.sectionId === section.id && activeEdit.index === index;
+  const [hx, hy] = getConnectionHandle(section, index, geo, bend);
   return (
-    <path d={d} fill="none" stroke={section.color}
-      strokeWidth={section.id === 'fines' && index === 6 ? 2.1 : 1.65}
-      opacity={section.id === 'fines' && index === 6 ? '.47' : '.32'}
-      strokeLinecap="round" strokeLinejoin="round"/>
+    <g>
+      <path d={d} fill="none" stroke={section.color}
+        strokeWidth={section.id === 'fines' && index === 6 ? 2.1 : 1.65}
+        opacity={section.id === 'fines' && index === 6 ? '.47' : '.32'}
+        strokeLinecap="round" strokeLinejoin="round"/>
+      {editMode && <>
+        <path data-editor-only="true" d={d} stroke="transparent" strokeWidth="26"
+          fill="none" style={{ cursor: 'move' }}
+          onPointerDown={e => onStartDrag(e, {
+            type: 'bend', sectionId: section.id, index
+          })}/>
+        {selected && <g data-editor-only="true"
+          style={{ cursor: 'move' }}
+          onPointerDown={e => onStartDrag(e, {
+            type: 'bend', sectionId: section.id, index
+          })}>
+          <circle cx={hx} cy={hy} r="15" fill="#fff"
+            stroke={section.color} strokeWidth="2.5"/>
+          <circle cx={hx} cy={hy} r="4.5" fill={section.color}/>
+        </g>}
+      </>}
+    </g>
   );
 }
 
@@ -110,6 +136,12 @@ function Concept({ item, section, coords, selectedId, onSelect, editMode, active
       onPointerDown={editMode ? e => onStartDrag(e, { type: 'node', sectionId: section.id, index }) : undefined}
       style={{ cursor: editMode ? 'grab' : 'pointer' }}>
       <title>{item.title}. {item.mapText || item.short}</title>
+      {editMode && activeEdit?.type === 'node' &&
+        activeEdit.sectionId === section.id && activeEdit.index === index &&
+        <rect data-editor-only="true" x={x - 22} y={y - 32}
+          width={boxWidth + 57} height={boxHeight + 18}
+          rx="15" fill="none" stroke={section.color}
+          strokeDasharray="7 5" strokeWidth="2.2" pointerEvents="none"/>}
       <rect x={x + 11} y={y - 25} width={boxWidth + 16}
         height={boxHeight} rx="13"
         fill={selected ? section.pale : '#fcfaf5'}
@@ -138,8 +170,13 @@ function Hub({ section, geo, editMode, activeEdit, onStartDrag }) {
   const rightTitle = section.id === 'gestion';
   const font = rightTitle ? 26.5 : 29;
   return (
-    <g>
+    <g onPointerDown={editMode ? e => onStartDrag(e, { type: 'hub', sectionId: section.id }) : undefined}
+      style={{ cursor: editMode ? 'grab' : 'default' }}>
       <ellipse cx={cx} cy={cy} rx="195" ry="58" fill={section.pale} opacity=".85"/>
+      {editMode && activeEdit?.type === 'hub' && activeEdit.sectionId === section.id &&
+        <ellipse data-editor-only="true" cx={cx} cy={cy} rx="203" ry="67"
+          fill="none" stroke={section.color} strokeDasharray="8 5"
+          strokeWidth="2.5" pointerEvents="none"/>}
       <ellipse cx={cx} cy={cy} rx="187" ry="52"
         fill="#fffefa" stroke={section.color} strokeWidth="2.4"/>
       <SectionSymbol section={section} id={section.id} x={cx - 133} y={cy}/>
@@ -171,12 +208,81 @@ function Section({ section, geo, focus, selectedId, onSelect, editMode, activeEd
   );
 }
 
-export default function MindMap({ selectedId, focus, onSelect }) {
+export default function MindMap({
+  selectedId, focus, onSelect, editMode = false, layout,
+  activeEdit, onEditSelect, onLayoutChange, onEditCommit
+}) {
+  const svgRef = React.useRef(null);
+  const dragRef = React.useRef(null);
+
+  const svgPoint = event => {
+    const svg = svgRef.current;
+    const ctm = svg?.getScreenCTM();
+    if (!svg || !ctm) return null;
+    const point = svg.createSVGPoint();
+    point.x = event.clientX;
+    point.y = event.clientY;
+    return point.matrixTransform(ctm.inverse());
+  };
+
+  const startDrag = (event, target) => {
+    if (!editMode || event.button !== 0) return;
+    const position = svgPoint(event);
+    if (!position) return;
+    event.preventDefault();
+    event.stopPropagation();
+    const svg = svgRef.current;
+    const geo = layoutGeometry(layout, target.sectionId);
+    const section = sections.find(s => s.id === target.sectionId);
+    const startPoint = target.type === 'bend'
+      ? getConnectionHandle(section, target.index, geo,
+          layout.bends?.[target.sectionId]?.[target.index])
+      : target.type === 'trunk'
+        ? getTrunkHandle(geo, layout.trunks?.[target.sectionId])
+        : null;
+    dragRef.current = {
+      pointerId: event.pointerId,
+      start: [position.x, position.y],
+      layout,
+      target: { ...target, startPoint },
+      changed: false
+    };
+    svg.setPointerCapture(event.pointerId);
+    onEditSelect(target);
+  };
+
+  const pointerMove = event => {
+    const drag = dragRef.current;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+    const position = svgPoint(event);
+    if (!position) return;
+    const dx = position.x - drag.start[0];
+    const dy = position.y - drag.start[1];
+    if (Math.hypot(dx, dy) < 1 && !drag.changed) return;
+    drag.changed = true;
+    onLayoutChange(moveLayoutPoint(drag.layout, drag.target, dx, dy));
+  };
+
+  const finishDrag = event => {
+    const drag = dragRef.current;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+    if (drag.changed) onEditCommit(drag.layout);
+    dragRef.current = null;
+    if (svgRef.current?.hasPointerCapture(event.pointerId)) {
+      svgRef.current.releasePointerCapture(event.pointerId);
+    }
+  };
+
   return (
-    <svg id="mental-map-svg" xmlns="http://www.w3.org/2000/svg"
+    <svg ref={svgRef} id="mental-map-svg" xmlns="http://www.w3.org/2000/svg"
       width={WIDTH} height={HEIGHT} viewBox={'0 0 ' + WIDTH + ' ' + HEIGHT}
       role="img" aria-label="Administración de la educación superior en Panamá. Mapa mental con cuatro ramas y explicaciones resumidas en cada concepto."
-      style={{ display: 'block', width: '100%', height: 'auto', background: '#fcfaf5' }}>
+      onPointerMove={pointerMove} onPointerUp={finishDrag}
+      onPointerCancel={finishDrag}
+      style={{
+        display: 'block', width: '100%', height: 'auto',
+        background: '#fcfaf5', touchAction: editMode ? 'none' : 'auto'
+      }}>
       <defs>
         <pattern id="paper-grain" width="34" height="34" patternUnits="userSpaceOnUse">
           <circle cx="1.1" cy="1.1" r=".75" fill="#c9c2b4" opacity=".22"/>
@@ -196,10 +302,16 @@ export default function MindMap({ selectedId, focus, onSelect }) {
 
       {sections.map(s =>
         <Trunk key={'trunk-' + s.id} section={s}
-          dim={focus !== 'all' && focus !== s.id}/>)}
+          geo={layoutGeometry(layout, s.id)}
+          dim={focus !== 'all' && focus !== s.id}
+          bend={layout.trunks?.[s.id]} editMode={editMode}
+          activeEdit={activeEdit} onStartDrag={startDrag}/>)}
       {sections.map(s =>
-        <Section key={s.id} section={s} focus={focus}
-          selectedId={selectedId} onSelect={onSelect}/>)}
+        <Section key={s.id} section={s}
+          geo={layoutGeometry(layout, s.id)} layout={layout}
+          focus={focus} selectedId={selectedId} onSelect={onSelect}
+          editMode={editMode} activeEdit={activeEdit}
+          onStartDrag={startDrag}/>)}
 
       <g>
         <ellipse cx="1000" cy="710" rx="225" ry="142"
