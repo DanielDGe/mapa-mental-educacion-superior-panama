@@ -217,17 +217,29 @@ export default function MindMap({ selectedId, focus, onSelect }) {
       </g>
 
       <g>
-        <path d="M879 915Q1000 905 1121 915" fill="none"
-          stroke="#c9c0ae" strokeWidth="1.6"/>
-        <text x="1000" y="952" textAnchor="middle"
+        {/* La síntesis ocupa únicamente el corredor central: ninguna línea
+            invade la zona de Planificación académica ni sus conexiones. */}
+        <path d="M916 898Q1000 891 1084 898" fill="none"
+          stroke="#c9c0ae" strokeWidth="1.4"/>
+        <text x="1000" y="929" textAnchor="middle"
           fontFamily="Georgia, 'Times New Roman', serif"
-          fontSize="19" fontStyle="italic" fill="#5a6763">
-          La ley orienta; los principios guían.
+          fontSize="18.5" fontStyle="italic" fill="#5a6763">
+          La ley orienta;
         </text>
-        <text x="1000" y="978" textAnchor="middle"
+        <text x="1000" y="954" textAnchor="middle"
           fontFamily="Georgia, 'Times New Roman', serif"
-          fontSize="19" fontStyle="italic" fill="#5a6763">
-          Los fines inspiran; la gestión actúa.
+          fontSize="18.5" fontStyle="italic" fill="#5a6763">
+          los principios guían.
+        </text>
+        <text x="1000" y="986" textAnchor="middle"
+          fontFamily="Georgia, 'Times New Roman', serif"
+          fontSize="18.5" fontStyle="italic" fill="#5a6763">
+          Los fines inspiran;
+        </text>
+        <text x="1000" y="1011" textAnchor="middle"
+          fontFamily="Georgia, 'Times New Roman', serif"
+          fontSize="18.5" fontStyle="italic" fill="#5a6763">
+          la gestión actúa.
         </text>
       </g>
 
