@@ -50,6 +50,25 @@ for (const section of sections) {
       failures.push('Faltan notas de estudio o fuentes en: ' + item.id);
   }
 }
+// Referencias del material de la Unidad II y aplicaciones prácticas de los fines.
+const byId = Object.fromEntries(sections.flatMap(section => section.items.map(item => [item.id, item])));
+const expected = {
+  constitucion: ['91', '92', '93', '96'],
+  ley47: ['47', '1946', '34', '1995'],
+  regimen: ['art. 6'],
+  articulos: ['59', '62'],
+  privadas: ['16', '1963'],
+  complementarias: ['161', '1996', '50', '1999', '1139', '1141', '1998'],
+  excelencia: ['evaluación', 'mejora'],
+  derechos: ['apoyo estudiantil', 'trato justo'],
+  innovacion: ['actualización curricular']
+};
+for (const [id, fragments] of Object.entries(expected)) {
+  for (const fragment of fragments) {
+    if (!byId[id]?.mapText.includes(fragment))
+      failures.push('Falta una referencia o aplicación en ' + id + ': ' + fragment);
+  }
+}
 if (all !== 24) failures.push('Se esperaban 24 conceptos, se encontraron ' + all);
 if (compact < 20) failures.push('Menos de 20 conceptos tienen texto compacto (2 líneas).');
 if (failures.length) {
