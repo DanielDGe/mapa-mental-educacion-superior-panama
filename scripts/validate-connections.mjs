@@ -29,6 +29,11 @@ for (const section of sections) {
     // esa correspondencia evita que la línea parezca cortada.
     assert.ok(d.endsWith(x + ' ' + y),
       'El conector no llega al nodo de ' + item.id);
+    assert.ok(!/\\b[QLHV]\b/.test(d),
+      'El conector contiene esquinas rectas: ' + item.id);
+    assert.equal((d.match(/ C/g) || []).length,
+      section.id === 'fines' && i === 6 ? 1 : 3,
+      'La ruta no utiliza las curvas Bézier previstas: ' + item.id);
 
     checked++;
   }
@@ -41,8 +46,8 @@ const specialPath = getConnectionPath(sections.find(s => s.id === 'fines'), 6, f
 const [sourceX, sourceY] = nodePin(conocimiento);
 assert.ok(specialPath.startsWith('M' + sourceX + ' ' + sourceY),
   'Compromiso social debe surgir de Conocimiento para servir');
-assert.ok(compromiso[1] < 1270,
-  'Compromiso social debe acercarse al resto de la rama');
+assert.ok(compromiso[1] < 1270 && compromiso[0] - conocimiento[0] < 270,
+  'Compromiso social debe estar cerca de Conocimiento para servir');
 assert.ok(compromiso[1] + 62 < 1344,
   'Debe quedar espacio para las referencias al pie');
 assert.equal(checked, 24);
