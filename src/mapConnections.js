@@ -75,16 +75,18 @@ export function getConnectionPath(section, index, geo) {
   const firstY = startY + direction * Math.min(56, distance * .29);
   const lastY = endY - direction * Math.min(37, distance * .25);
   const midY = (firstY + lastY) / 2;
-  const nearX = endX + (leftColumn ? -28 : -25);
+  const turn = Math.min(18, Math.abs(lastY - midY) * .45);
+  const entry = Math.min(20, Math.abs(endY - lastY) * .75);
+  const nearX = endX - 27;
 
   return 'M' + startX + ' ' + startY +
     ' C' + (startX + laneX) / 2 + ' ' + firstY +
     ' ' + laneX + ' ' + (firstY + direction * 6) +
     ' ' + laneX + ' ' + midY +
-    ' C' + laneX + ' ' + (midY + direction * 28) +
-    ' ' + laneX + ' ' + (lastY - direction * 28) +
+    ' C' + laneX + ' ' + (midY + direction * turn) +
+    ' ' + laneX + ' ' + (lastY - direction * turn) +
     ' ' + laneX + ' ' + lastY +
-    ' C' + laneX + ' ' + (lastY + direction * 21) +
+    ' C' + laneX + ' ' + (lastY + direction * entry) +
     ' ' + nearX + ' ' + endY +
     ' ' + endX + ' ' + endY;
 }
