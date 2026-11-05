@@ -9,7 +9,7 @@ export const geometry = {
   },
   fines: {
     hub: [550, 838], quadrant: 'bottom-left',
-    nodes: [[84, 933], [480, 933], [84, 1060], [480, 1060], [84, 1164], [480, 1164], [805, 1253]]
+    nodes: [[84, 933], [480, 933], [84, 1060], [480, 1060], [84, 1164], [480, 1164], [728, 1253]]
   },
   gestion: {
     hub: [1450, 838], quadrant: 'bottom-right',
@@ -36,22 +36,25 @@ export function nodePin([x, y]) {
   return [x - 1, y - 3];
 }
 
+/**
+ * Curvas Bézier continuas: sin segmentos rectos ni esquinas de 90 grados.
+ * La aproximación lateral llega hasta el centro del punto de cada concepto.
+ */
 export function getConnectionPath(section, index, geo) {
   const point = geo.nodes[index];
-  if (!point) throw new Error('No hay posición definida para ' + section.id + '/' + index);
-
+  if (!point) {
+    throw new Error('No hay posición definida para ' + section.id + '/' + index);
+  }
   const [endX, endY] = nodePin(point);
 
-  // «Compromiso social» nace de «Conocimiento para servir»: es una relación
-  // intencional entre dos fines, y lo integra visualmente al grupo naranja.
+  // «Compromiso social» surge de «Conocimiento para servir». El inicio de
+  // la curva queda detrás del fondo de la idea de origen; el tramo visible
+  // emerge suavemente bajo ella y llega al nuevo nodo sin cruzar el texto.
   if (section.id === 'fines' && index === 6) {
     const [startX, startY] = nodePin(geo.nodes[5]);
     return 'M' + startX + ' ' + startY +
-      ' C' + startX + ' ' + (startY + 44) +
-      ' ' + (startX + 5) + ' ' + (startY + 76) +
-      ' ' + (startX + 52) + ' ' + (startY + 78) +
-      ' C' + (startX + 134) + ' ' + (startY + 82) +
-      ' ' + (endX - 72) + ' ' + (endY - 8) +
+      ' C' + (startX + 12) + ' ' + (startY + 74) +
+      ' ' + (endX - 116) + ' ' + (endY - 12) +
       ' ' + endX + ' ' + endY;
   }
 
@@ -63,15 +66,25 @@ export function getConnectionPath(section, index, geo) {
   const [hubX, hubY] = geo.hub;
   const startX = hubX + (leftColumn ? -114 : 114);
   const startY = hubY + (top ? -40 : 40);
-  const stationY = top ? 517 : 892;
-  const approachY = point[1] + (top ? 48 : -38);
-  const controlX = (startX + laneX) / 2;
+
+  // Mantenemos las dos columnas de cada cuadrante, pero suavizamos su
+  // recorrido mediante tres curvas que comparten una tangente vertical.
+  // Se acercan al círculo por un costado, sin atravesar títulos o párrafos.
+  const direction = top ? -1 : 1;
+  const distance = Math.abs(endY - startY);
+  const firstY = startY + direction * Math.min(56, distance * .29);
+  const lastY = endY - direction * Math.min(37, distance * .25);
+  const midY = (firstY + lastY) / 2;
+  const nearX = endX + (leftColumn ? -28 : -25);
 
   return 'M' + startX + ' ' + startY +
-    ' C' + controlX + ' ' + stationY +
-    ' ' + laneX + ' ' + stationY +
-    ' ' + laneX + ' ' + stationY +
-    ' L' + laneX + ' ' + approachY +
-    ' Q' + laneX + ' ' + endY +
+    ' C' + (startX + laneX) / 2 + ' ' + firstY +
+    ' ' + laneX + ' ' + (firstY + direction * 6) +
+    ' ' + laneX + ' ' + midY +
+    ' C' + laneX + ' ' + (midY + direction * 28) +
+    ' ' + laneX + ' ' + (lastY - direction * 28) +
+    ' ' + laneX + ' ' + lastY +
+    ' C' + laneX + ' ' + (lastY + direction * 21) +
+    ' ' + nearX + ' ' + endY +
     ' ' + endX + ' ' + endY;
 }
