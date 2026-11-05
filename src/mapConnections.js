@@ -40,12 +40,33 @@ export function nodePin([x, y]) {
  * Curvas Bézier continuas: sin segmentos rectos ni esquinas de 90 grados.
  * La aproximación lateral llega hasta el centro del punto de cada concepto.
  */
-export function getConnectionPath(section, index, geo) {
+export function getConnectionPath(section, index, geo, bend = null) {
   const point = geo.nodes[index];
   if (!point) {
     throw new Error('No hay posición definida para ' + section.id + '/' + index);
   }
   const [endX, endY] = nodePin(point);
+
+  if (bend) {
+    // Manual editing changes the shape, not either endpoint.
+    const special = section.id === 'fines' && index === 6;
+    const leftColumn = index % 2 === 0;
+    const [startX, startY] = special
+      ? nodePin(geo.nodes[5])
+      : [geo.hub[0] + (leftColumn ? -114 : 114),
+         geo.hub[1] + (geo.quadrant.startsWith('top') ? -40 : 40)];
+    const [bx, by] = bend;
+    const dx = endX - startX;
+    const handle = Math.max(28, Math.min(100, Math.abs(dx) / 4));
+    const t = dx < 0 ? -handle : handle;
+    return 'M' + startX + ' ' + startY +
+      ' C' + (startX + t) + ' ' + startY +
+      ' ' + (bx - t) + ' ' + by +
+      ' ' + bx + ' ' + by +
+      ' C' + (bx + t) + ' ' + by +
+      ' ' + (endX - t) + ' ' + endY +
+      ' ' + endX + ' ' + endY;
+  }
 
   // «Compromiso social» surge de «Conocimiento para servir». El inicio de
   // la curva queda detrás del fondo de la idea de origen; el tramo visible
@@ -89,4 +110,52 @@ export function getConnectionPath(section, index, geo) {
     ' C' + laneX + ' ' + (lastY + direction * entry) +
     ' ' + nearX + ' ' + endY +
     ' ' + endX + ' ' + endY;
+}
+
+
+export function getConnectionHandle(section, index, geo, custom = null) {
+  if (custom) return [...custom];
+  if (section.id === 'fines' && index === 6) {
+    const source = nodePin(geo.nodes[5]);
+    const end = nodePin(geo.nodes[6]);
+    return [Math.round((source[0] + end[0]) / 2),
+      Math.round((source[1] + end[1]) / 2 + 14)];
+  }
+  const point = nodePin(geo.nodes[index]);
+  const left = index % 2 === 0;
+  const laneX = lanes[section.id]?.[left ? 0 : 1];
+  return [laneX ?? point[0], Math.round((geo.hub[1] + point[1]) / 2)];
+}
+
+export function getTrunkAnchors(geo) {
+  const upper = geo.quadrant.startsWith('top');
+  const left = geo.quadrant.endsWith('left');
+  const from = [1000 + (left ? -208 : 208), 706 + (upper ? -53 : 65)];
+  const to = [geo.hub[0] + (left ? 176 : -176),
+    geo.hub[1] + (upper ? 13 : -9)];
+  return [from, to];
+}
+
+export function getTrunkHandle(geo, custom = null) {
+  if (custom) return [...custom];
+  const [from, to] = getTrunkAnchors(geo);
+  return [Math.round((from[0] + to[0]) / 2), Math.round((from[1] + to[1]) / 2)];
+}
+
+export function getTrunkPath(geo, custom = null) {
+  const [from, to] = getTrunkAnchors(geo);
+  const [sx, sy] = from, [ex, ey] = to;
+  if (!custom) {
+    const mx = (sx + ex) / 2;
+    return 'M' + sx + ' ' + sy +
+      ' C' + mx + ' ' + sy + ' ' + mx + ' ' + ey + ' ' + ex + ' ' + ey;
+  }
+  const [bx, by] = custom;
+  return 'M' + sx + ' ' + sy +
+    ' C' + ((sx + bx) / 2) + ' ' + sy +
+    ' ' + bx + ' ' + ((sy + by) / 2) +
+    ' ' + bx + ' ' + by +
+    ' C' + bx + ' ' + ((by + ey) / 2) +
+    ' ' + ((ex + bx) / 2) + ' ' + ey +
+    ' ' + ex + ' ' + ey;
 }
