@@ -262,4 +262,5 @@ button:focus-visible, input:focus-visible { outline: 3px solid #8fb3c0; outline-
   .map-print-sheet svg { width: 420mm !important; height: 296.8mm !important;
     max-width: none !important; display: block !important; }
   .map-print-sheet svg [data-filterable] { opacity: 1 !important; }
+  .map-print-sheet svg [data-editor-only] { display: none !important; }
 }
