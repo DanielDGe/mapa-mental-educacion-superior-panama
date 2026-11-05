@@ -42,6 +42,23 @@ npm run dev
 
 Vite muestra la dirección para abrir la aplicación (normalmente http://localhost:5173).
 
+## Editor visual: ajustar la distribución a tu gusto
+
+La aplicación dispone de **Editar mapa** encima de la lámina. Al activarlo:
+
+1. **Mover conceptos:** arrastra el nombre de un concepto, el círculo o su párrafo. El título y su explicación se desplazan juntos, sin cambiar de categoría.
+2. **Mover ramas:** arrastra los óvalos grandes de colores. Sus conexiones principales y secundarias se actualizan automáticamente.
+3. **Mover y curvar líneas:** haz clic y arrastra una conexión. Aparecerá un pequeño círculo de control en la conexión seleccionada; también puedes arrastrar ese círculo para ajustar el recorrido. Las líneas siguen ancladas a sus conceptos.
+4. **Deshacer:** recupera el estado anterior al último movimiento.
+5. **Restaurar:** vuelve a la distribución original. Puedes deshacerlo.
+6. **Guardar JSON:** descarga tu distribución actual como archivo para respaldo.
+7. **Cargar JSON:** importa un diseño guardado anteriormente para seguir trabajando.
+8. **Terminar edición:** regresa al modo lectura y conserva tus posiciones.
+
+Los cambios **se guardan automáticamente en el almacenamiento local de ese navegador**, incluso al recargar la página. No se envían a un servidor ni a GitHub. Si deseas trabajar en otro equipo, guardar un respaldo o evitar perderlos al limpiar los datos del navegador, usa **Guardar JSON** y guárdalo fuera de la carpeta temporal.
+
+El editor solo cambia **posiciones y curvas**. No altera los 24 conceptos, sus explicaciones, las fuentes ni los colores. Los tiradores de edición se omiten en SVG, PNG y PDF.
+
 ## PDF para entregar en Canvas
 
 1. Abre la aplicación y revisa el mapa completo.
