@@ -1,12 +1,12 @@
 import React from 'react';
 import { metadata, sections } from './data.js';
-import { geometry, getConnectionPath } from './mapConnections.js';
+import { getConnectionPath, getConnectionHandle, getTrunkPath, getTrunkHandle } from './mapConnections.js';
+import { layoutGeometry, moveLayoutPoint } from './editorLayout.js';
 
 // SVG autónomo: todo el contenido permanece visible al descargar PNG o PDF.
 // Cada idea lleva una frase natural y suficiente para comprenderla sin el panel lateral.
 const WIDTH = 2000;
 const HEIGHT = 1414;
-const CENTER = [1000, 706];
 
 const headings = {
   legal: ['Fundamentos', 'legales'],
@@ -58,7 +58,7 @@ function SectionSymbol({ id, x, y, section }) {
   );
 }
 
-function Trunk({ section, dim }) {
+function Trunk({ section, geo, dim, editMode, activeEdit, onStartDrag }) {
   const { hub, quadrant } = geometry[section.id];
   const upper = quadrant.startsWith('top');
   const left = quadrant.endsWith('left');
@@ -78,11 +78,10 @@ function Trunk({ section, dim }) {
   );
 }
 
-function Twig({ section, index }) {
-  const geo = geometry[section.id];
+function Twig({ section, index, geo, editMode, activeEdit, onStartDrag, bend }) {
   // Las curvas atraviesan corredores vacíos y terminan en el mismo punto que
   // el círculo del concepto. No usamos máscaras que oculten su tramo final.
-  const d = getConnectionPath(section, index, geo);
+  const d = getConnectionPath(section, index, geo, bend);
   return (
     <path d={d} fill="none" stroke={section.color}
       strokeWidth={section.id === 'fines' && index === 6 ? 2.1 : 1.65}
@@ -91,7 +90,7 @@ function Twig({ section, index }) {
   );
 }
 
-function Concept({ item, section, coords, selectedId, onSelect }) {
+function Concept({ item, section, coords, selectedId, onSelect, editMode, activeEdit, onStartDrag, index }) {
   const [x, y] = coords;
   const small = item.id === 'compromiso';
   const boxWidth = small ? 310 : 345;
@@ -102,13 +101,14 @@ function Concept({ item, section, coords, selectedId, onSelect }) {
   return (
     <g role="button" tabIndex={0}
       aria-label={item.title + '. ' + (item.mapText || item.short)}
-      onClick={() => onSelect(item.id)}
+      onClick={() => { if (!editMode) onSelect(item.id); }}
       onKeyDown={e => {
-        if (e.key === 'Enter' || e.key === ' ') {
+        if (!editMode && (e.key === 'Enter' || e.key === ' ')) {
           e.preventDefault(); onSelect(item.id);
         }
       }}
-      style={{ cursor: 'pointer' }}>
+      onPointerDown={editMode ? e => onStartDrag(e, { type: 'node', sectionId: section.id, index }) : undefined}
+      style={{ cursor: editMode ? 'grab' : 'pointer' }}>
       <title>{item.title}. {item.mapText || item.short}</title>
       <rect x={x + 11} y={y - 25} width={boxWidth + 16}
         height={boxHeight} rx="13"
@@ -132,8 +132,8 @@ function Concept({ item, section, coords, selectedId, onSelect }) {
   );
 }
 
-function Hub({ section }) {
-  const [cx, cy] = geometry[section.id].hub;
+function Hub({ section, geo, editMode, activeEdit, onStartDrag }) {
+  const [cx, cy] = geo.hub;
   const [line1, line2] = headings[section.id];
   const rightTitle = section.id === 'gestion';
   const font = rightTitle ? 26.5 : 29;
@@ -153,17 +153,20 @@ function Hub({ section }) {
   );
 }
 
-function Section({ section, focus, selectedId, onSelect }) {
+function Section({ section, geo, focus, selectedId, onSelect, editMode, activeEdit, onStartDrag, layout }) {
   const dim = focus !== 'all' && focus !== section.id;
-  const geo = geometry[section.id];
   return (
     <g data-filterable="true" opacity={dim ? '.20' : '1'}>
       {section.items.map((_,i) =>
-        <Twig section={section} index={i} key={i}/>)}
-      <Hub section={section}/>
+        <Twig section={section} index={i} key={i} geo={geo}
+          bend={layout.bends?.[section.id]?.[i]} editMode={editMode}
+          activeEdit={activeEdit} onStartDrag={onStartDrag}/>)}
+      <Hub section={section} geo={geo} editMode={editMode}
+        activeEdit={activeEdit} onStartDrag={onStartDrag}/>
       {section.items.map((item,i) =>
         <Concept key={item.id} item={item} section={section}
-          coords={geo.nodes[i]} selectedId={selectedId} onSelect={onSelect}/>)}
+          coords={geo.nodes[i]} selectedId={selectedId} onSelect={onSelect}
+          editMode={editMode} activeEdit={activeEdit} onStartDrag={onStartDrag} index={i}/>)}
     </g>
   );
 }
