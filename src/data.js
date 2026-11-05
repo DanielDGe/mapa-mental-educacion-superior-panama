@@ -21,7 +21,7 @@ export const sections = [
       {
         id: 'constitucion', title: 'Constitución Política',
         short: 'Arts. 91, 92, 93 y 96',
-        mapText: 'Reconoce el derecho a la educación y orienta los deberes educativos del Estado.',
+        mapText: 'Los arts. 91, 92, 93 y 96 de la Constitución orientan la educación.',
         detail: 'La Constitución Política de Panamá constituye la base del derecho a la educación y de las responsabilidades públicas vinculadas a su organización. El material de la unidad identifica especialmente los artículos 91, 92, 93 y 96.',
         relation: 'Orienta las garantías y compromisos que la universidad debe respetar.',
         source: 'Fundamentos Legales, Principios y Fines..., p. 1'
@@ -29,7 +29,7 @@ export const sections = [
       {
         id: 'ley47', title: 'Ley Orgánica de Educación',
         short: 'Ley 47/1946 · Ley 34/1995',
-        mapText: 'Organiza el sistema educativo panameño; sus reformas actualizan ese marco.',
+        mapText: 'La Ley 47 de 1946 y su reforma Ley 34 de 1995 organizan la educación.',
         detail: 'La Ley 47 de 1946 estructura la educación panameña. El material presenta sus modificaciones por la Ley 34 de 1995 y también menciona reformas posteriores mediante las leyes 50 de 2002 y 60 de 2003.',
         relation: 'Ofrece el marco general para organizar, planificar y supervisar la educación.',
         source: 'Ley Orgánica de Educación y sus Reformas, p. 2'
@@ -37,7 +37,7 @@ export const sections = [
       {
         id: 'regimen', title: 'Régimen universitario',
         short: 'Art. 6: leyes especiales',
-        mapText: 'La educación universitaria se rige por leyes especiales y normas propias.',
+        mapText: 'El art. 6 establece que las universidades se rigen por leyes especiales.',
         detail: 'El documento sobre la Ley Orgánica recuerda que la educación universitaria se rige por leyes especiales, en el marco de la coordinación y supervisión educativa mencionada en el material.',
         relation: 'Vincula el régimen general educativo con la organización propia de cada institución.',
         source: 'Ley Orgánica de Educación y sus Reformas, p. 3'
@@ -45,7 +45,7 @@ export const sections = [
       {
         id: 'articulos', title: 'Tercer nivel de enseñanza',
         short: 'Arts. 59 a 62',
-        mapText: 'Vinculan formación profesional, investigación y recursos con el desarrollo del país.',
+        mapText: 'Los arts. 59–62 relacionan formación, investigación y recursos con el país.',
         detail: 'El artículo 59 aborda formación profesional, investigación y cultura; el 60 sitúa la oferta de educación superior y la relaciona con las necesidades del país; el 61 destaca la calidad de la docencia, la investigación y la extensión; el 62 se refiere a recursos y facilidades del Estado.',
         relation: 'Fundamenta la oferta académica, la calidad y la asignación de recursos.',
         source: 'Ley Orgánica de Educación y sus Reformas, pp. 4–5'
@@ -53,7 +53,7 @@ export const sections = [
       {
         id: 'privadas', title: 'Universidades particulares',
         short: 'Decreto Ley 16 de 1963',
-        mapText: 'Reconoce la creación de universidades particulares sujetas a la ley.',
+        mapText: 'El Decreto Ley 16 de 1963 reconoce la creación de universidades privadas.',
         detail: 'El material señala que el artículo 1 del Decreto Ley 16 de 11 de julio de 1963 reconoce la posibilidad de crear y hacer funcionar universidades privadas, sujetas a la normativa aplicable.',
         relation: 'Relaciona la creación y funcionamiento institucional con exigencias legales.',
         source: 'Fundamentos Legales, Principios y Fines..., p. 1'
@@ -61,7 +61,7 @@ export const sections = [
       {
         id: 'complementarias', title: 'Normas complementarias',
         short: 'Decretos y resueltos citados',
-        mapText: 'Decretos y resueltos complementan las normas de la gestión universitaria.',
+        mapText: 'Decretos 161 (1996) y 50 (1999); resueltos 1139 (1999) y 1141 (1998).',
         detail: 'El documento enumera el Decreto 161 de 1996, el Decreto 50 de 1999, el Resuelto 1139 de 1999 y el Resuelto 1141 de 1998 (vinculado a modificaciones del Decreto Ejecutivo 203 de 1996). Se citan conforme al material, sin atribuirles aquí funciones no explicadas en él.',
         relation: 'Recuerda que la gestión debe consultar las disposiciones específicas aplicables.',
         source: 'Fundamentos Legales, Principios y Fines..., p. 1'
@@ -84,7 +84,7 @@ export const sections = [
       {
         id: 'excelencia', title: 'Excelencia académica',
         short: 'Docencia de alta calidad',
-        mapText: 'Promueve una docencia de calidad y una formación profesional integral.',
+        mapText: 'La docencia de calidad se fortalece con evaluación y mejora continua.',
         detail: 'Se propone mantener niveles elevados de docencia y una cultura general amplia, junto con la investigación, extensión y servicios profesionales.',
         relation: 'Se concreta en formación docente, evaluación y mejora continua.',
         source: 'Fundamentos Legales, Principios y Fines..., p. 1'
@@ -123,7 +123,7 @@ export const sections = [
       {
         id: 'derechos', title: 'Derechos y equidad',
         short: 'Justicia social y respeto',
-        mapText: 'Promueve el respeto a los derechos humanos, la equidad y la justicia social.',
+        mapText: 'La equidad orienta el apoyo estudiantil y el trato justo en la universidad.',
         detail: 'La educación superior debe promover derechos humanos, equidad y justicia social, fomentando una convivencia más respetuosa e inclusiva.',
         relation: 'Orienta la atención estudiantil y las políticas de igualdad de oportunidades.',
         source: 'Fundamentos Legales, Principios y Fines..., p. 2'
@@ -155,7 +155,7 @@ export const sections = [
       {
         id: 'innovacion', title: 'Innovación tecnológica',
         short: 'Apoyo al sector productivo',
-        mapText: 'Apoya la actualización tecnológica y el desarrollo del país.',
+        mapText: 'La innovación impulsa la actualización curricular y el progreso del país.',
         detail: 'El documento plantea estimular a los sectores público y privado en sus procesos de actualización e innovación tecnológica.',
         relation: 'Impulsa la actualización curricular y la vinculación con el entorno laboral.',
         source: 'Fundamentos Legales, Principios y Fines..., p. 2'
@@ -194,7 +194,7 @@ export const sections = [
       {
         id: 'curriculo', title: 'Actualización curricular',
         short: 'Pertinencia y articulación',
-        mapText: 'Actualiza los planes de estudio frente a los cambios de la sociedad.',
+        mapText: 'Ajusta los planes de estudio a las necesidades sociales y tecnológicas.',
         detail: 'La presentación sobre la Ley Orgánica cita el artículo 246, que relaciona los planes de educación superior con la articulación entre niveles y el equilibrio entre formación general y especializada.',
         relation: 'Permite ajustar programas a necesidades sociales y tecnológicas.',
         source: 'Interpretación de gestión; Ley Orgánica..., p. 7'
@@ -202,7 +202,7 @@ export const sections = [
       {
         id: 'calidad', title: 'Evaluación de la calidad',
         short: 'Seguimiento y mejora',
-        mapText: 'Evalúa resultados para corregir dificultades y mejorar la docencia.',
+        mapText: 'Evalúa la docencia para corregir dificultades y mejorar resultados.',
         detail: 'Los materiales destacan la calidad de la docencia y la evaluación de las funciones de la educación superior como responsabilidad permanente.',
         relation: 'Se expresa en indicadores, revisión de resultados y mejora continua.',
         source: 'Interpretación de gestión; Fundamentos..., p. 2'
