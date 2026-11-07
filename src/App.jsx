@@ -3,7 +3,8 @@ import MindMap from './MindMap.jsx';
 import { metadata, sections, byId } from './data.js';
 import {
   defaultLayout, readSavedLayout, writeSavedLayout,
-  exportLayoutFile, importLayoutFile
+  exportLayoutFile, importLayoutFile,
+  MAP_BACKGROUNDS, setLayoutBackground
 } from './editorLayout.js';
 
 const fileBase = 'Mapa_mental_educacion_superior_Panama';
@@ -49,7 +50,7 @@ function exportSVG() {
   );
 }
 
-async function exportPNG() {
+async function exportPNG(backgroundColor) {
   const source = URL.createObjectURL(new Blob([vectorMarkup()], {
     type: 'image/svg+xml;charset=utf-8'
   }));
@@ -65,7 +66,7 @@ async function exportPNG() {
     canvas.height = 2828;
     const context = canvas.getContext('2d');
     if (!context) throw new Error('El navegador no admite exportación PNG.');
-    context.fillStyle = '#fcfaf5';
+    context.fillStyle = backgroundColor;
     context.fillRect(0, 0, canvas.width, canvas.height);
     context.drawImage(image, 0, 0, canvas.width, canvas.height);
     const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
@@ -111,6 +112,7 @@ export default function App() {
   const [status, setStatus] = useState('');
   const [editMode, setEditMode] = useState(false);
   const [layout, setLayout] = useState(readSavedLayout);
+  const backgroundColor = MAP_BACKGROUNDS[layout.background] ?? MAP_BACKGROUNDS.paper;
   const [activeEdit, setActiveEdit] = useState(null);
   const historyRef = useRef([]);
   const [undoCount, setUndoCount] = useState(0);
@@ -129,6 +131,15 @@ export default function App() {
     historyRef.current.push(previous);
     if (historyRef.current.length > 35) historyRef.current.shift();
     setUndoCount(historyRef.current.length);
+  };
+
+  const onChangeBackground = value => {
+    if (layout.background === value) return;
+    recordHistory(layout);
+    setLayout(setLayoutBackground(layout, value));
+    setStatus(value === 'white'
+      ? 'Fondo blanco puro aplicado al mapa y sus exportaciones.'
+      : 'Fondo papel crema aplicado al mapa y sus exportaciones.');
   };
 
   const onUndoLayout = () => {
@@ -224,7 +235,7 @@ export default function App() {
   const onPNG = async () => {
     try {
       setStatus('Generando imagen…');
-      await exportPNG();
+      await exportPNG(backgroundColor);
       setStatus('PNG generado en alta resolución.');
     } catch (error) {
       setStatus(error.message);
@@ -285,7 +296,7 @@ export default function App() {
                 title="Restablecer tamaño" aria-label="Restablecer tamaño"><Icon name="reset" size={17}/></button>
             </div>
           </div>
-          <div className="map-viewport">
+          <div className="map-viewport" style={{ '--map-background': backgroundColor }}>
             <div className="map-print-sheet" style={{ width: zoom + '%' }}>
               <MindMap selectedId={selectedId} focus={focus} onSelect={selectConcept}
                 editMode={editMode} layout={layout} activeEdit={activeEdit}
@@ -313,6 +324,27 @@ export default function App() {
                   : 'Conexión seleccionada: arrastra el punto circular para darle forma.'
                 : 'Selecciona un concepto, una rama o una línea para moverlos.'}</span>
               <small>Guardado automático en este navegador. Los puntos de edición no aparecen en el PDF.</small>
+            </div>
+            <div className="background-picker" role="group" aria-label="Fondo del mapa">
+              <span className="background-picker-label">Fondo del mapa</span>
+              <div className="background-picker-options">
+                <button type="button"
+                  className={'background-choice' + (layout.background === 'white' ? ' active' : '')}
+                  aria-pressed={layout.background === 'white'}
+                  onClick={() => onChangeBackground('white')}
+                  title="Fondo blanco liso, sin textura">
+                  <span className="background-swatch white" aria-hidden="true"/>
+                  Blanco puro
+                </button>
+                <button type="button"
+                  className={'background-choice' + (layout.background === 'paper' ? ' active' : '')}
+                  aria-pressed={layout.background === 'paper'}
+                  onClick={() => onChangeBackground('paper')}
+                  title="Fondo cálido con textura de papel">
+                  <span className="background-swatch paper" aria-hidden="true"/>
+                  Papel crema
+                </button>
+              </div>
             </div>
             <div className="editor-buttons">
               <button type="button" disabled={!undoCount} onClick={onUndoLayout}
