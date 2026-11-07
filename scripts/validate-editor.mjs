@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
 import {
   defaultLayout, normalizeLayout, layoutGeometry, moveLayoutPoint,
-  exportLayoutFile, importLayoutFile
+  exportLayoutFile, importLayoutFile,
+  MAP_BACKGROUNDS, DEFAULT_MAP_BACKGROUND, setLayoutBackground
 } from '../src/editorLayout.js';
 import {
   geometry, nodePin, getConnectionPath,
@@ -11,6 +12,21 @@ import { sections } from '../src/data.js';
 
 const initial = defaultLayout();
 assert.equal(initial.version, 1);
+assert.equal(initial.background, DEFAULT_MAP_BACKGROUND);
+assert.equal(MAP_BACKGROUNDS.white, '#ffffff');
+assert.equal(MAP_BACKGROUNDS.paper, '#fcfaf5');
+
+const whiteLayout = setLayoutBackground(initial, 'white');
+assert.equal(whiteLayout.background, 'white');
+assert.equal(initial.background, 'paper', 'Cambiar el fondo no debe mutar el estado original');
+assert.deepEqual(whiteLayout.nodes, initial.nodes, 'Cambiar el fondo no mueve conceptos');
+assert.deepEqual(whiteLayout.hubs, initial.hubs, 'Cambiar el fondo no mueve ramas');
+assert.throws(() => setLayoutBackground(initial, 'pink'));
+assert.equal(importLayoutFile(exportLayoutFile(whiteLayout)).background, 'white');
+const legacy = structuredClone(initial);
+delete legacy.background;
+assert.equal(normalizeLayout(legacy).background, 'paper',
+  'Los diseños JSON anteriores deben conservarse y usar fondo papel');
 assert.equal(Object.keys(initial.nodes).length, 4);
 assert.equal(sections.reduce((sum, s) => sum + initial.nodes[s.id].length, 0), 24);
 
@@ -68,4 +84,4 @@ assert.equal(normalizeLayout({
   ...initial, nodes: { ...initial.nodes, legal: [[Infinity, NaN]] }
 }).nodes.legal.length, 6);
 
-console.log('Editor validado: 24 nodos, 4 ramas, curvaturas editables, respaldos JSON y recuperación.');
+console.log('Editor validado: 24 nodos, 4 ramas, fondos blanco/papel, curvas y respaldos JSON compatibles.');
