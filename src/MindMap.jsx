@@ -1,7 +1,7 @@
 import React from 'react';
 import { metadata, sections } from './data.js';
 import { getConnectionPath, getConnectionHandle, getTrunkPath, getTrunkHandle } from './mapConnections.js';
-import { layoutGeometry, moveLayoutPoint } from './editorLayout.js';
+import { layoutGeometry, moveLayoutPoint, MAP_BACKGROUNDS } from './editorLayout.js';
 
 // SVG autónomo: todo el contenido permanece visible al descargar PNG o PDF.
 // Cada idea lleva una frase natural y suficiente para comprenderla sin el panel lateral.
@@ -116,7 +116,7 @@ function Twig({ section, index, geo, editMode, activeEdit, onStartDrag, bend }) 
   );
 }
 
-function Concept({ item, section, coords, selectedId, onSelect, editMode, activeEdit, onStartDrag, index }) {
+function Concept({ item, section, coords, selectedId, onSelect, editMode, activeEdit, onStartDrag, index, backgroundColor }) {
   const [x, y] = coords;
   const small = item.id === 'compromiso';
   const boxWidth = small ? 310 : 345;
@@ -144,11 +144,11 @@ function Concept({ item, section, coords, selectedId, onSelect, editMode, active
           strokeDasharray="7 5" strokeWidth="2.2" pointerEvents="none"/>}
       <rect x={x + 11} y={y - 25} width={boxWidth + 16}
         height={boxHeight} rx="13"
-        fill={selected ? section.pale : '#fcfaf5'}
+        fill={selected ? section.pale : backgroundColor}
         stroke={selected ? section.color : 'none'}
         strokeWidth={selected ? 2.6 : 0} />
       <circle cx={x - 1} cy={y - 3} r="8.4"
-        fill="#fcfaf5" stroke={section.color} strokeWidth="2.6"/>
+        fill={backgroundColor} stroke={section.color} strokeWidth="2.6"/>
       <circle cx={x - 1} cy={y - 3} r="2.7" fill={section.color}/>
       <text x={x + 16} y={y + 3} fontFamily="Arial, sans-serif" fontSize="20.5"
         fontWeight="730" fill="#233949"
@@ -164,7 +164,7 @@ function Concept({ item, section, coords, selectedId, onSelect, editMode, active
   );
 }
 
-function Hub({ section, geo, editMode, activeEdit, onStartDrag }) {
+function Hub({ section, geo, editMode, activeEdit, onStartDrag, hubFill }) {
   const [cx, cy] = geo.hub;
   const [line1, line2] = headings[section.id];
   const rightTitle = section.id === 'gestion';
@@ -178,7 +178,7 @@ function Hub({ section, geo, editMode, activeEdit, onStartDrag }) {
           fill="none" stroke={section.color} strokeDasharray="8 5"
           strokeWidth="2.5" pointerEvents="none"/>}
       <ellipse cx={cx} cy={cy} rx="187" ry="52"
-        fill="#fffefa" stroke={section.color} strokeWidth="2.4"/>
+        fill={hubFill} stroke={section.color} strokeWidth="2.4"/>
       <SectionSymbol section={section} id={section.id} x={cx - 133} y={cy}/>
       <text x={cx + 27} y={cy - 8} fontFamily="Georgia, 'Times New Roman', serif"
         fontSize={font} fontWeight="730" fill={section.ink}
@@ -190,7 +190,7 @@ function Hub({ section, geo, editMode, activeEdit, onStartDrag }) {
   );
 }
 
-function Section({ section, geo, focus, selectedId, onSelect, editMode, activeEdit, onStartDrag, layout }) {
+function Section({ section, geo, focus, selectedId, onSelect, editMode, activeEdit, onStartDrag, layout, backgroundColor, hubFill }) {
   const dim = focus !== 'all' && focus !== section.id;
   return (
     <g data-filterable="true" opacity={dim ? '.20' : '1'}>
@@ -199,11 +199,12 @@ function Section({ section, geo, focus, selectedId, onSelect, editMode, activeEd
           bend={layout.bends?.[section.id]?.[i]} editMode={editMode}
           activeEdit={activeEdit} onStartDrag={onStartDrag}/>)}
       <Hub section={section} geo={geo} editMode={editMode}
-        activeEdit={activeEdit} onStartDrag={onStartDrag}/>
+        activeEdit={activeEdit} onStartDrag={onStartDrag} hubFill={hubFill}/>
       {section.items.map((item,i) =>
         <Concept key={item.id} item={item} section={section}
           coords={geo.nodes[i]} selectedId={selectedId} onSelect={onSelect}
-          editMode={editMode} activeEdit={activeEdit} onStartDrag={onStartDrag} index={i}/>)}
+          editMode={editMode} activeEdit={activeEdit} onStartDrag={onStartDrag}
+          index={i} backgroundColor={backgroundColor}/>)}
     </g>
   );
 }
@@ -212,6 +213,9 @@ export default function MindMap({
   selectedId, focus, onSelect, editMode = false, layout,
   activeEdit, onEditSelect, onLayoutChange, onEditCommit
 }) {
+  const background = layout?.background === 'white' ? 'white' : 'paper';
+  const backgroundColor = MAP_BACKGROUNDS[background];
+  const hubFill = background === 'white' ? backgroundColor : '#fffefa';
   const svgRef = React.useRef(null);
   const dragRef = React.useRef(null);
 
@@ -281,15 +285,16 @@ export default function MindMap({
       onPointerCancel={finishDrag}
       style={{
         display: 'block', width: '100%', height: 'auto',
-        background: '#fcfaf5', touchAction: editMode ? 'none' : 'auto'
+        background: backgroundColor, touchAction: editMode ? 'none' : 'auto'
       }}>
       <defs>
         <pattern id="paper-grain" width="34" height="34" patternUnits="userSpaceOnUse">
           <circle cx="1.1" cy="1.1" r=".75" fill="#c9c2b4" opacity=".22"/>
         </pattern>
       </defs>
-      <rect width={WIDTH} height={HEIGHT} fill="#fcfaf5"/>
-      <rect width={WIDTH} height={HEIGHT} fill="url(#paper-grain)"/>
+      <rect width={WIDTH} height={HEIGHT} fill={backgroundColor}/>
+      {background === 'paper' &&
+        <rect width={WIDTH} height={HEIGHT} fill="url(#paper-grain)"/>}
       <text x="85" y="64" fontFamily="Georgia, 'Times New Roman', serif"
         fontSize="23" fontWeight="700" fontStyle="italic"
         fill="#244356">Educación superior en Panamá</text>
@@ -311,7 +316,8 @@ export default function MindMap({
           geo={layoutGeometry(layout, s.id)} layout={layout}
           focus={focus} selectedId={selectedId} onSelect={onSelect}
           editMode={editMode} activeEdit={activeEdit}
-          onStartDrag={startDrag}/>)}
+          onStartDrag={startDrag} backgroundColor={backgroundColor}
+          hubFill={hubFill}/>)}
 
       <g>
         <ellipse cx="1000" cy="710" rx="225" ry="142"
