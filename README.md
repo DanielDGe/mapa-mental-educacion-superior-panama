@@ -55,9 +55,20 @@ La aplicación dispone de **Editar mapa** encima de la lámina. Al activarlo:
 7. **Cargar JSON:** importa un diseño guardado anteriormente para seguir trabajando.
 8. **Terminar edición:** regresa al modo lectura y conserva tus posiciones.
 
+### Fondo del mapa
+
+Dentro de **Editar mapa → Fondo del mapa**, elige una de las dos opciones:
+
+- **Blanco puro:** blanco liso (`#FFFFFF`), sin textura.
+- **Papel crema:** fondo cálido (`#FCFAF5`), con pequeños puntos de papel.
+
+La selección aparece de inmediato en la lámina y también se aplica al **PNG, SVG y PDF**. Se guarda automáticamente junto con la distribución en el navegador y en el archivo **Guardar JSON**; los diseños JSON anteriores siguen siendo compatibles. Cambiar el fondo no mueve los conceptos ni modifica sus conexiones.
+
+
+
 Los cambios **se guardan automáticamente en el almacenamiento local de ese navegador**, incluso al recargar la página. No se envían a un servidor ni a GitHub. Si deseas trabajar en otro equipo, guardar un respaldo o evitar perderlos al limpiar los datos del navegador, usa **Guardar JSON** y guárdalo fuera de la carpeta temporal.
 
-El editor solo cambia **posiciones y curvas**. No altera los 24 conceptos, sus explicaciones, las fuentes ni los colores. Los tiradores de edición se omiten en SVG, PNG y PDF.
+El editor solo cambia **posiciones, curvas y fondo de la lámina**. No altera los 24 conceptos, sus explicaciones, las fuentes ni los colores de las ramas. Los tiradores de edición se omiten en SVG, PNG y PDF.
 
 ## PDF para entregar en Canvas
 
