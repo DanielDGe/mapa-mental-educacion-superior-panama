@@ -1,171 +1,378 @@
 import React from 'react';
 import { metadata, sections } from './data.js';
+import { getConnectionPath, getConnectionHandle, getTrunkPath, getTrunkHandle } from './mapConnections.js';
+import { layoutGeometry, moveLayoutPoint, MAP_BACKGROUNDS } from './editorLayout.js';
 
-const W = 1600;
-const H = 1132;
-const locations = {
-  legal: { x: 54, y: 66, side: 'left' },
-  principios: { x: 1091, y: 66, side: 'right' },
-  fines: { x: 54, y: 634, side: 'left' },
-  gestion: { x: 1091, y: 634, side: 'right' }
+// SVG autónomo: todo el contenido permanece visible al descargar PNG o PDF.
+// Cada idea lleva una frase natural y suficiente para comprenderla sin el panel lateral.
+const WIDTH = 2000;
+const HEIGHT = 1414;
+
+const headings = {
+  legal: ['Fundamentos', 'legales'],
+  principios: ['Principios', 'educativos'],
+  fines: ['Fines de la', 'educación'],
+  gestion: ['Administración', 'universitaria']
 };
-const relationships = [
-  { lead: 'Las leyes', text: 'establecen el marco de actuación', color: '#3566c9' },
-  { lead: 'Los principios', text: 'orientan la manera de actuar', color: '#138879' },
-  { lead: 'Los fines', text: 'dan sentido a los resultados', color: '#d78b23' },
-  { lead: 'La gestión', text: 'convierte todo en decisiones', color: '#8b5bc0' }
-];
 
-function Connection({ d, color }) {
-  return <path d={d} fill="none" stroke={color} strokeWidth="5"
-    strokeLinecap="round" opacity="0.74" />;
+// El ancho estimado admite unas 48 letras por línea; la división se realiza
+// por palabras, de modo que no se corta ni se reemplaza el texto original.
+function wrapSentence(text, fontSize = 16.2, maxWidth = 343) {
+  const words = text.trim().split(/\s+/);
+  const context = typeof document === 'undefined'
+    ? null
+    : document.createElement('canvas').getContext('2d');
+  if (context) context.font = fontSize + 'px Arial';
+  const measure = value => context
+    ? context.measureText(value).width
+    : value.length * fontSize * .52;
+  const lines = [];
+  let line = '';
+  for (const word of words) {
+    const next = line ? line + ' ' + word : word;
+    if (line && measure(next) > maxWidth) {
+      lines.push(line);
+      line = word;
+    } else {
+      line = next;
+    }
+  }
+  if (line) lines.push(line);
+  return lines;
 }
 
-function Branch({ section, focus, selectedId, onSelect }) {
-  const pos = locations[section.id];
-  const width = 455;
-  const faded = focus !== 'all' && focus !== section.id;
+function SectionSymbol({ id, x, y, section }) {
+  const common = { fill: 'none', stroke: section.ink, strokeWidth: 2.7,
+    strokeLinecap: 'round', strokeLinejoin: 'round' };
+  const art = {
+    legal: <><path d="M-23-5 0-19 23-5M-20 18H20M-16 0V14M-5 0V14M6 0V14M17 0V14M-24 23H24"/></>,
+    principios: <><path d="M-13-7a13 13 0 0 1 26 0c0 7-8 12-8 17h-10c0-5-8-10-8-17M-7 16H7M-5 21H5"/></>,
+    fines: <><circle r="19"/><circle r="11"/><circle r="3" fill={section.ink} stroke="none"/><path d="M0-28V-19M0 19V28M-28 0h9M19 0h9"/></>,
+    gestion: <><rect x="-8" y="-22" width="16" height="12" rx="2"/><rect x="-25" y="10" width="15" height="13" rx="2"/><rect x="10" y="10" width="15" height="13" rx="2"/><path d="M0-10V2M-18 10V2H18V10"/></>
+  };
   return (
-    <g opacity={faded ? 0.29 : 1} style={{ transition: 'opacity 180ms ease' }}>
-      <rect x={pos.x} y={pos.y} width={width} height="380" rx="25"
-        fill="#ffffff" stroke={section.color} strokeOpacity=".22" strokeWidth="2" />
-      <rect x={pos.x} y={pos.y} width={width} height="61" rx="25"
-        fill={section.color} />
-      <rect x={pos.x} y={pos.y + 31} width={width} height="30"
-        fill={section.color} />
-      <circle cx={pos.x + 35} cy={pos.y + 30} r="19" fill="#ffffff" opacity=".20" />
-      <text x={pos.x + 35} y={pos.y + 37} textAnchor="middle"
-        fill="#ffffff" fontSize="24" fontWeight="700">{section.marker}</text>
-      <text x={pos.x + 66} y={pos.y + 38} fill="#ffffff"
-        fontSize={section.id === 'gestion' ? 22 : 24} fontWeight="750"
-        letterSpacing="-0.4">{section.title}</text>
-      {section.items.map((item, index) => {
-        const itemY = pos.y + 72 + index * 49;
-        const highlighted = selectedId === item.id;
-        return (
-          <g key={item.id} role="button" tabIndex={0}
-            aria-label={item.title + ': ' + item.short}
-            onClick={() => onSelect(item.id)}
-            onKeyDown={event => {
-              if (event.key === 'Enter' || event.key === ' ') {
-                event.preventDefault();
-                onSelect(item.id);
-              }
-            }}
-            style={{ cursor: 'pointer', outline: 'none' }}>
-            <rect x={pos.x + 14} y={itemY} width={width - 28} height="44" rx="12"
-              fill={highlighted ? section.pale : '#f7f9fd'}
-              stroke={highlighted ? section.color : '#e9edf5'}
-              strokeWidth={highlighted ? 2.7 : 1} />
-            <rect x={pos.x + 14} y={itemY + 6} width="4" height="32" rx="2"
-              fill={section.color} />
-            <circle cx={pos.x + 38} cy={itemY + 22} r="12"
-              fill={section.pale} stroke={section.color} strokeOpacity=".35" />
-            <text x={pos.x + 38} y={itemY + 27} textAnchor="middle"
-              fontSize="13" fontWeight="800" fill={section.ink}>{index + 1}</text>
-            <text x={pos.x + 61} y={itemY + 18}
-              fontSize="17" fontWeight="700" fill="#1a2b47">{item.title}</text>
-            <text x={pos.x + 61} y={itemY + 35}
-              fontSize="12.5" fill="#5c6a81">{item.short}</text>
-            <circle cx={pos.x + width - 31} cy={itemY + 22} r="10"
-              fill={section.pale} />
-            <text x={pos.x + width - 31} y={itemY + 27}
-              textAnchor="middle" fill={section.ink} fontSize="14">+</text>
-          </g>
-        );
-      })}
-      <text x={pos.x + width - 14} y={pos.y + 409} textAnchor="end"
-        fontSize="12.5" fill={section.ink} opacity=".8">{section.items.length} conceptos</text>
+    <g transform={'translate(' + x + ' ' + y + ')'} {...common}>
+      <circle r="39" fill={section.pale} stroke={section.color} strokeWidth="2.1"/>
+      {art[id]}
     </g>
   );
 }
 
-export default function MindMap({ selectedId, focus, onSelect }) {
+function Trunk({ section, geo, dim, editMode, activeEdit, onStartDrag, bend }) {
+  const d = getTrunkPath(geo, bend);
+  const selected = activeEdit?.type === 'trunk' && activeEdit.sectionId === section.id;
+  const [hx, hy] = getTrunkHandle(geo, bend);
   return (
-    <svg id="mental-map-svg" xmlns="http://www.w3.org/2000/svg"
-      viewBox={'0 0 ' + W + ' ' + H}
-      width={W} height={H}
-      role="img" aria-label={metadata.title + '. Cuatro ramas: fundamentos legales, principios, fines y administración universitaria.'}
-      style={{ width: '100%', height: 'auto', display: 'block', background: '#f5f7fc' }}>
+    <g data-filterable="true" opacity={dim ? '.20' : '1'}>
+      <path d={d} stroke={section.pale} strokeWidth="17"
+        fill="none" strokeLinecap="round"/>
+      <path d={d} stroke={section.color} strokeWidth="7.2"
+        fill="none" strokeLinecap="round"/>
+      {editMode && <>
+        <path data-editor-only="true" d={d} stroke="transparent"
+          strokeWidth="32" fill="none"
+          style={{ cursor: 'move' }}
+          onPointerDown={e => onStartDrag(e, { type: 'trunk', sectionId: section.id })}/>
+        {selected && <g data-editor-only="true"
+          onPointerDown={e => onStartDrag(e, { type: 'trunk', sectionId: section.id })}
+          style={{ cursor: 'move' }}>
+          <circle cx={hx} cy={hy} r="17" fill="#fff"
+            stroke={section.color} strokeWidth="3"/>
+          <circle cx={hx} cy={hy} r="5" fill={section.color}/>
+        </g>}
+      </>}
+    </g>
+  );
+}
+
+function Twig({ section, index, geo, editMode, activeEdit, onStartDrag, bend }) {
+  const d = getConnectionPath(section, index, geo, bend);
+  const selected = activeEdit?.type === 'bend' &&
+    activeEdit.sectionId === section.id && activeEdit.index === index;
+  const [hx, hy] = getConnectionHandle(section, index, geo, bend);
+  return (
+    <g>
+      <path d={d} fill="none" stroke={section.color}
+        strokeWidth={section.id === 'fines' && index === 6 ? 2.1 : 1.65}
+        opacity={section.id === 'fines' && index === 6 ? '.47' : '.32'}
+        strokeLinecap="round" strokeLinejoin="round"/>
+      {editMode && <>
+        <path data-editor-only="true" d={d} stroke="transparent" strokeWidth="26"
+          fill="none" style={{ cursor: 'move' }}
+          onPointerDown={e => onStartDrag(e, {
+            type: 'bend', sectionId: section.id, index
+          })}/>
+        {selected && <g data-editor-only="true"
+          style={{ cursor: 'move' }}
+          onPointerDown={e => onStartDrag(e, {
+            type: 'bend', sectionId: section.id, index
+          })}>
+          <circle cx={hx} cy={hy} r="15" fill="#fff"
+            stroke={section.color} strokeWidth="2.5"/>
+          <circle cx={hx} cy={hy} r="4.5" fill={section.color}/>
+        </g>}
+      </>}
+    </g>
+  );
+}
+
+function Concept({ item, section, coords, selectedId, onSelect, editMode, activeEdit, onStartDrag, index, backgroundColor }) {
+  const [x, y] = coords;
+  const small = item.id === 'compromiso';
+  const boxWidth = small ? 310 : 345;
+  const fontSize = small ? 16 : 16.8;
+  const lines = wrapSentence(item.mapText || item.short, fontSize, small ? 298 : 343);
+  const selected = selectedId === item.id;
+  const boxHeight = lines.length > 2 ? 111 : 92;
+  return (
+    <g role="button" tabIndex={0}
+      aria-label={item.title + '. ' + (item.mapText || item.short)}
+      onClick={() => { if (!editMode) onSelect(item.id); }}
+      onKeyDown={e => {
+        if (!editMode && (e.key === 'Enter' || e.key === ' ')) {
+          e.preventDefault(); onSelect(item.id);
+        }
+      }}
+      onPointerDown={editMode ? e => onStartDrag(e, { type: 'node', sectionId: section.id, index }) : undefined}
+      style={{ cursor: editMode ? 'grab' : 'pointer' }}>
+      <title>{item.title}. {item.mapText || item.short}</title>
+      {editMode && activeEdit?.type === 'node' &&
+        activeEdit.sectionId === section.id && activeEdit.index === index &&
+        <rect data-editor-only="true" x={x - 22} y={y - 32}
+          width={boxWidth + 57} height={boxHeight + 18}
+          rx="15" fill="none" stroke={section.color}
+          strokeDasharray="7 5" strokeWidth="2.2" pointerEvents="none"/>}
+      <rect x={x + 11} y={y - 25} width={boxWidth + 16}
+        height={boxHeight} rx="13"
+        fill={selected ? section.pale : backgroundColor}
+        stroke={selected ? section.color : 'none'}
+        strokeWidth={selected ? 2.6 : 0} />
+      <circle cx={x - 1} cy={y - 3} r="8.4"
+        fill={backgroundColor} stroke={section.color} strokeWidth="2.6"/>
+      <circle cx={x - 1} cy={y - 3} r="2.7" fill={section.color}/>
+      <text x={x + 16} y={y + 3} fontFamily="Arial, sans-serif" fontSize="20.5"
+        fontWeight="730" fill="#233949"
+        letterSpacing="-.42">{item.title}</text>
+      <path d={'M' + (x + 16) + ' ' + (y + 12) + 'h' + (small ? 142 : 164)}
+        stroke={section.color} opacity=".25" strokeWidth="1.5" />
+      <text x={x + 16} y={y + 32} fontFamily="Arial, sans-serif" fontSize={fontSize}
+        fontWeight="440" fill="#4e5e68" letterSpacing="-.04">
+        {lines.map((line, i) =>
+          <tspan key={i} x={x + 16} dy={i === 0 ? 0 : 22}>{line}</tspan>)}
+      </text>
+    </g>
+  );
+}
+
+function Hub({ section, geo, editMode, activeEdit, onStartDrag, hubFill }) {
+  const [cx, cy] = geo.hub;
+  const [line1, line2] = headings[section.id];
+  const rightTitle = section.id === 'gestion';
+  const font = rightTitle ? 26.5 : 29;
+  return (
+    <g onPointerDown={editMode ? e => onStartDrag(e, { type: 'hub', sectionId: section.id }) : undefined}
+      style={{ cursor: editMode ? 'grab' : 'default' }}>
+      <ellipse cx={cx} cy={cy} rx="195" ry="58" fill={section.pale} opacity=".85"/>
+      {editMode && activeEdit?.type === 'hub' && activeEdit.sectionId === section.id &&
+        <ellipse data-editor-only="true" cx={cx} cy={cy} rx="203" ry="67"
+          fill="none" stroke={section.color} strokeDasharray="8 5"
+          strokeWidth="2.5" pointerEvents="none"/>}
+      <ellipse cx={cx} cy={cy} rx="187" ry="52"
+        fill={hubFill} stroke={section.color} strokeWidth="2.4"/>
+      <SectionSymbol section={section} id={section.id} x={cx - 133} y={cy}/>
+      <text x={cx + 27} y={cy - 8} fontFamily="Georgia, 'Times New Roman', serif"
+        fontSize={font} fontWeight="730" fill={section.ink}
+        textAnchor="middle" letterSpacing="-.6">{line1}</text>
+      <text x={cx + 27} y={cy + 25} fontFamily="Georgia, 'Times New Roman', serif"
+        fontSize={font} fontWeight="730" fill={section.ink}
+        textAnchor="middle" letterSpacing="-.6">{line2}</text>
+    </g>
+  );
+}
+
+function Section({ section, geo, focus, selectedId, onSelect, editMode, activeEdit, onStartDrag, layout, backgroundColor, hubFill }) {
+  const dim = focus !== 'all' && focus !== section.id;
+  return (
+    <g data-filterable="true" opacity={dim ? '.20' : '1'}>
+      {section.items.map((_,i) =>
+        <Twig section={section} index={i} key={i} geo={geo}
+          bend={layout.bends?.[section.id]?.[i]} editMode={editMode}
+          activeEdit={activeEdit} onStartDrag={onStartDrag}/>)}
+      <Hub section={section} geo={geo} editMode={editMode}
+        activeEdit={activeEdit} onStartDrag={onStartDrag} hubFill={hubFill}/>
+      {section.items.map((item,i) =>
+        <Concept key={item.id} item={item} section={section}
+          coords={geo.nodes[i]} selectedId={selectedId} onSelect={onSelect}
+          editMode={editMode} activeEdit={activeEdit} onStartDrag={onStartDrag}
+          index={i} backgroundColor={backgroundColor}/>)}
+    </g>
+  );
+}
+
+export default function MindMap({
+  selectedId, focus, onSelect, editMode = false, layout,
+  activeEdit, onEditSelect, onLayoutChange, onEditCommit
+}) {
+  const background = layout?.background === 'white' ? 'white' : 'paper';
+  const backgroundColor = MAP_BACKGROUNDS[background];
+  const hubFill = background === 'white' ? backgroundColor : '#fffefa';
+  const svgRef = React.useRef(null);
+  const dragRef = React.useRef(null);
+
+  const svgPoint = event => {
+    const svg = svgRef.current;
+    const ctm = svg?.getScreenCTM();
+    if (!svg || !ctm) return null;
+    const point = svg.createSVGPoint();
+    point.x = event.clientX;
+    point.y = event.clientY;
+    return point.matrixTransform(ctm.inverse());
+  };
+
+  const startDrag = (event, target) => {
+    if (!editMode || event.button !== 0) return;
+    const position = svgPoint(event);
+    if (!position) return;
+    event.preventDefault();
+    event.stopPropagation();
+    const svg = svgRef.current;
+    const geo = layoutGeometry(layout, target.sectionId);
+    const section = sections.find(s => s.id === target.sectionId);
+    const startPoint = target.type === 'bend'
+      ? getConnectionHandle(section, target.index, geo,
+          layout.bends?.[target.sectionId]?.[target.index])
+      : target.type === 'trunk'
+        ? getTrunkHandle(geo, layout.trunks?.[target.sectionId])
+        : null;
+    dragRef.current = {
+      pointerId: event.pointerId,
+      start: [position.x, position.y],
+      layout,
+      target: { ...target, startPoint },
+      changed: false
+    };
+    svg.setPointerCapture(event.pointerId);
+    onEditSelect(target);
+  };
+
+  const pointerMove = event => {
+    const drag = dragRef.current;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+    const position = svgPoint(event);
+    if (!position) return;
+    const dx = position.x - drag.start[0];
+    const dy = position.y - drag.start[1];
+    if (Math.hypot(dx, dy) < 1 && !drag.changed) return;
+    drag.changed = true;
+    onLayoutChange(moveLayoutPoint(drag.layout, drag.target, dx, dy));
+  };
+
+  const finishDrag = event => {
+    const drag = dragRef.current;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+    if (drag.changed) onEditCommit(drag.layout);
+    dragRef.current = null;
+    if (svgRef.current?.hasPointerCapture(event.pointerId)) {
+      svgRef.current.releasePointerCapture(event.pointerId);
+    }
+  };
+
+  return (
+    <svg ref={svgRef} id="mental-map-svg" xmlns="http://www.w3.org/2000/svg"
+      width={WIDTH} height={HEIGHT} viewBox={'0 0 ' + WIDTH + ' ' + HEIGHT}
+      role="img" aria-label="Administración de la educación superior en Panamá. Mapa mental con cuatro ramas y explicaciones resumidas en cada concepto."
+      onPointerMove={pointerMove} onPointerUp={finishDrag}
+      onPointerCancel={finishDrag}
+      style={{
+        display: 'block', width: '100%', height: 'auto',
+        background: backgroundColor, touchAction: editMode ? 'none' : 'auto'
+      }}>
       <defs>
-        <linearGradient id="center-gradient" x1="0" x2="1" y1="0" y2="1">
-          <stop offset="0%" stopColor="#162b52" />
-          <stop offset="100%" stopColor="#263c64" />
-        </linearGradient>
-        <pattern id="dots" width="28" height="28" patternUnits="userSpaceOnUse">
-          <circle cx="1.5" cy="1.5" r="1.4" fill="#cfd7e6" opacity=".5" />
+        <pattern id="paper-grain" width="34" height="34" patternUnits="userSpaceOnUse">
+          <circle cx="1.1" cy="1.1" r=".75" fill="#c9c2b4" opacity=".22"/>
         </pattern>
       </defs>
-      <rect width={W} height={H} fill="#f5f7fc" />
-      <rect width={W} height={H} fill="url(#dots)" />
-      <rect x="22" y="20" width={W - 44} height={H - 40} rx="30"
-        fill="none" stroke="#dbe2ee" strokeWidth="2" />
-      <text x="64" y="42" fontSize="13.5" fill="#77869e"
-        letterSpacing="2.1" fontWeight="750">MAPA MENTAL DIGITAL · UNIDAD DIDÁCTICA II</text>
-      <text x={W - 66} y="42" fontSize="13.5" fill="#77869e"
-        textAnchor="end">{metadata.author} · Docencia Superior</text>
+      <rect width={WIDTH} height={HEIGHT} fill={backgroundColor}/>
+      {background === 'paper' &&
+        <rect width={WIDTH} height={HEIGHT} fill="url(#paper-grain)"/>}
+      <text x="85" y="64" fontFamily="Georgia, 'Times New Roman', serif"
+        fontSize="23" fontWeight="700" fontStyle="italic"
+        fill="#244356">Educación superior en Panamá</text>
+      <text x={WIDTH - 85} y="64" textAnchor="end"
+        fontSize="14" fontWeight="700" letterSpacing="2.1"
+        fill="#788793">UNIDAD II · MAPA MENTAL DIGITAL</text>
+      <text x="85" y="93" fontSize="12.7" letterSpacing="1.55"
+        fill="#8b979e">LEGISLACIÓN · PRINCIPIOS · FINES · GESTIÓN UNIVERSITARIA</text>
+      <path d="M84 113H1916" stroke="#dcd7cd" strokeWidth="2"/>
+
+      {sections.map(s =>
+        <Trunk key={'trunk-' + s.id} section={s}
+          geo={layoutGeometry(layout, s.id)}
+          dim={focus !== 'all' && focus !== s.id}
+          bend={layout.trunks?.[s.id]} editMode={editMode}
+          activeEdit={activeEdit} onStartDrag={startDrag}/>)}
+      {sections.map(s =>
+        <Section key={s.id} section={s}
+          geo={layoutGeometry(layout, s.id)} layout={layout}
+          focus={focus} selectedId={selectedId} onSelect={onSelect}
+          editMode={editMode} activeEdit={activeEdit}
+          onStartDrag={startDrag} backgroundColor={backgroundColor}
+          hubFill={hubFill}/>)}
 
       <g>
-        <Connection color="#3566c9" d="M548 470 C526 457 537 318 509 252" />
-        <Connection color="#138879" d="M1052 470 C1077 442 1054 319 1092 252" />
-        <Connection color="#d78b23" d="M548 589 C526 624 539 807 509 841" />
-        <Connection color="#8b5bc0" d="M1052 589 C1078 632 1059 813 1092 841" />
-        <circle cx="548" cy="470" r="10" fill="#3566c9" />
-        <circle cx="1052" cy="470" r="10" fill="#138879" />
-        <circle cx="548" cy="589" r="10" fill="#d78b23" />
-        <circle cx="1052" cy="589" r="10" fill="#8b5bc0" />
-      </g>
-
-      {sections.map(section => (
-        <Branch key={section.id} section={section}
-          focus={focus} selectedId={selectedId} onSelect={onSelect} />
-      ))}
-
-      <g>
-        <rect x="548" y="425" width="504" height="212" rx="32"
-          fill="url(#center-gradient)" />
-        <rect x="560" y="437" width="480" height="188" rx="26"
-          fill="none" stroke="#ffffff" strokeOpacity=".20" strokeWidth="2" />
-        <text x="800" y="474" textAnchor="middle" fill="#bcd2ff"
-          fontSize="15" fontWeight="700" letterSpacing="3.4">CONCEPTO CENTRAL</text>
-        <text x="800" y="524" textAnchor="middle" fill="#ffffff"
-          fontSize="31" fontWeight="800" letterSpacing="-.6">ADMINISTRACIÓN DE LA</text>
-        <text x="800" y="563" textAnchor="middle" fill="#ffffff"
-          fontSize="35" fontWeight="800" letterSpacing="-1">EDUCACIÓN SUPERIOR</text>
-        <text x="800" y="604" textAnchor="middle" fill="#ffffff"
-          fontSize="29" fontWeight="750" letterSpacing=".1">EN PANAMÁ</text>
+        <ellipse cx="1000" cy="710" rx="225" ry="142"
+          fill="#fff1d9" stroke="#e5d2b4" strokeWidth="4"/>
+        <ellipse cx="1000" cy="710" rx="211" ry="130" fill="#183d4e"/>
+        <path d="M843 636Q1000 599 1157 636"
+          fill="none" stroke="#7ea8ac" strokeWidth="2.1" opacity=".42"/>
+        <text x="1000" y="651" textAnchor="middle" fill="#b9dcd3"
+          fontSize="16.5" fontWeight="680" letterSpacing="2.4">CONCEPTO CENTRAL</text>
+        <text x="1000" y="695" textAnchor="middle" fill="#fffaf0"
+          fontFamily="Georgia, 'Times New Roman', serif" fontSize="30.5"
+          fontWeight="700">Administración de la</text>
+        <text x="1000" y="732" textAnchor="middle" fill="#fffaf0"
+          fontFamily="Georgia, 'Times New Roman', serif" fontSize="33"
+          fontWeight="700">Educación Superior</text>
+        <text x="1000" y="769" textAnchor="middle" fill="#cde8d8"
+          fontSize="23.5" fontWeight="650">en Panamá</text>
       </g>
 
       <g>
-        <text x="800" y="697" textAnchor="middle" fill="#384b69"
-          fontSize="22" fontWeight="750">¿Cómo se relacionan?</text>
-        {relationships.map((link, i) => {
-          const y = 715 + i * 62;
-          return (
-            <g key={link.lead}>
-              <rect x="573" y={y} width="454" height="52" rx="13"
-                fill="#ffffff" stroke="#dce3ef" strokeWidth="1.6" />
-              <rect x="573" y={y} width="8" height="52" rx="4" fill={link.color} />
-              <circle cx="606" cy={y + 26} r="10" fill={link.color} opacity=".14" />
-              <circle cx="606" cy={y + 26} r="4" fill={link.color} />
-              <text x="626" y={y + 22} fill="#1d304f" fontSize="15.2"
-                fontWeight="750">{link.lead}</text>
-              <text x="626" y={y + 39} fill="#5f6d82" fontSize="13.6">{link.text}</text>
-              {i < 3 && <text x="800" y={y + 63} textAnchor="middle"
-                fontSize="15" fill="#8594ad">↓</text>}
-            </g>
-          );
-        })}
+        {/* La síntesis ocupa únicamente el corredor central: ninguna línea
+            invade la zona de Planificación académica ni sus conexiones. */}
+        <path d="M916 898Q1000 891 1084 898" fill="none"
+          stroke="#c9c0ae" strokeWidth="1.4"/>
+        <text x="1000" y="929" textAnchor="middle"
+          fontFamily="Georgia, 'Times New Roman', serif"
+          fontSize="18.5" fontStyle="italic" fill="#5a6763">
+          La ley orienta;
+        </text>
+        <text x="1000" y="954" textAnchor="middle"
+          fontFamily="Georgia, 'Times New Roman', serif"
+          fontSize="18.5" fontStyle="italic" fill="#5a6763">
+          los principios guían.
+        </text>
+        <text x="1000" y="986" textAnchor="middle"
+          fontFamily="Georgia, 'Times New Roman', serif"
+          fontSize="18.5" fontStyle="italic" fill="#5a6763">
+          Los fines inspiran;
+        </text>
+        <text x="1000" y="1011" textAnchor="middle"
+          fontFamily="Georgia, 'Times New Roman', serif"
+          fontSize="18.5" fontStyle="italic" fill="#5a6763">
+          la gestión actúa.
+        </text>
       </g>
 
-      <rect x="53" y="1066" width="1494" height="43" rx="12"
-        fill="#e9eef8" />
-      <text x="76" y="1084" fill="#263951" fontSize="13.3" fontWeight="700">
+      <path d="M84 1344H1916" stroke="#dcd7cd" strokeWidth="2"/>
+      <text x="85" y="1370" fill="#3d5865" fontSize="14.5" fontWeight="680">
         Fuentes: Ley Orgánica de Educación y sus Reformas; Fundamentos Legales, Principios y Fines de la Educación Superior en Panamá.
       </text>
-      <text x="76" y="1100" fill="#65748b" fontSize="12.2">
-        Síntesis académica de materiales de la Unidad II. Las relaciones administrativas son interpretaciones aplicadas.
+      <text x="85" y="1392" fill="#819092" fontSize="12.9">
+        Síntesis basada en los materiales de clase. Los ejemplos de gestión son interpretaciones académicas.
       </text>
+      <text x="1915" y="1390" textAnchor="end" fill="#536678" fontSize="14.5"
+        fontFamily="Georgia, 'Times New Roman', serif" fontStyle="italic">{metadata.author}</text>
     </svg>
   );
 }
