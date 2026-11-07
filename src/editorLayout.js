@@ -4,9 +4,24 @@ import { geometry } from './mapConnections.js';
 export const EDITOR_STORAGE_KEY = 'panama-higher-ed-mindmap-layout:v1';
 export const EDITOR_LAYOUT_VERSION = 1;
 
+// El fondo forma parte del diseño exportable, sin modificar las coordenadas.
+export const MAP_BACKGROUNDS = Object.freeze({
+  paper: '#fcfaf5',
+  white: '#ffffff'
+});
+export const DEFAULT_MAP_BACKGROUND = 'paper';
+
+export function setLayoutBackground(layout, background) {
+  if (!Object.hasOwn(MAP_BACKGROUNDS, background)) {
+    throw new Error('Fondo de mapa no reconocido.');
+  }
+  return { ...layout, background };
+}
+
 export function defaultLayout() {
   return {
     version: EDITOR_LAYOUT_VERSION,
+    background: DEFAULT_MAP_BACKGROUND,
     hubs: Object.fromEntries(Object.entries(geometry).map(([id, g]) => [id, [...g.hub]])),
     nodes: Object.fromEntries(Object.entries(geometry).map(([id, g]) => [
       id, g.nodes.map(point => [...point])
@@ -36,6 +51,9 @@ export function normalizeLayout(value) {
   if (!value || typeof value !== 'object' || value.version !== EDITOR_LAYOUT_VERSION) {
     return base;
   }
+  base.background = Object.hasOwn(MAP_BACKGROUNDS, value.background)
+    ? value.background
+    : DEFAULT_MAP_BACKGROUND;
   for (const [id, geo] of Object.entries(geometry)) {
     base.hubs[id] = safePoint(value.hubs?.[id], geo.hub, 275, 1725, 220, 1150);
     base.nodes[id] = geo.nodes.map((point, index) =>
